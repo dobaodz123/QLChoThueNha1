@@ -1,0 +1,22 @@
+﻿@model IEnumerable<dynamic>
+
+<h2>Yêu cầu thuê của tôi</h2>
+
+<table class="table">
+    <tr>
+        <th>Nhà</th>
+        <th>Ngày bắt đầu</th>
+        <th>Ngày kết thúc</th>
+        <th>Trạng thái</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@(item?.House?.Name ?? "—")</td>
+            <td>@(item?.StartDate ?? "—")</td>
+            <td>@(item?.EndDate ?? "—")</td>
+            <td>@(item?.Status ?? "—")</td>
+        </tr>
+    }
+</table>

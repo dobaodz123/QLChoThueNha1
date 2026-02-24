@@ -1,0 +1,100 @@
+﻿@model List<QlChoThueNha1.Models.House>
+@{
+    ViewData["Title"] = "Tìm kiếm nhà";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4"><i class="fas fa-search"></i> Tìm kiếm nhà cho thuê</h2>
+
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-controller="House" asp-action="Search" method="get">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Địa điểm</label>
+                        <input type="text" name="location" value="@ViewBag.Location"
+                               class="form-control" placeholder="Quận, Phường...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Giá từ</label>
+                        <input type="number" name="minPrice" value="@ViewBag.MinPrice"
+                               class="form-control" placeholder="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Giá đến</label>
+                        <input type="number" name="maxPrice" value="@ViewBag.MaxPrice"
+                               class="form-control" placeholder="∞">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Diện tích từ</label>
+                        <input type="number" name="minArea" value="@ViewBag.MinArea"
+                               class="form-control" placeholder="0">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Loại nhà</label>
+                        <select name="houseTypeId" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                            @foreach (var type in ViewBag.HouseTypes as List<HouseType>)
+                            {
+                                <option value="@type.Id"
+                                        selected="@(ViewBag.SelectedHouseTypeId == type.Id)">
+                                    @type.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Results -->
+    <div class="mb-3">
+        <h5>Tìm thấy <strong>@Model.Count</strong> kết quả</h5>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var house in Model)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        <img src="@(string.IsNullOrEmpty(house.ImageUrl) ? "/images/no-image.jpg" : house.ImageUrl)"
+                             class="card-img-top house-img" alt="@house.Name">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="card-title mb-0">@house.Name</h5>
+                                <span class="status-available">Trống</span>
+                            </div>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt"></i> @house.Address
+                            </p>
+                            <div class="d-flex justify-content-between mb-3">
+                                <span class="price-tag">@house.Price.ToString("N0") đ</span>
+                                <span class="text-muted">@house.Area m²</span>
+                            </div>
+                            <a asp-controller="House" asp-action="Details" asp-route-id="@house.Id"
+                               class="btn btn-outline-primary w-100">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-search"></i> Không tìm thấy nhà phù hợp.
+            Vui lòng thử lại với điều kiện khác.
+        </div>
+    }
+</div>

@@ -1,0 +1,96 @@
+﻿@model List<QlChoThueNha1.Models.RentalRequest>
+@{
+    ViewData["Title"] = "Yêu cầu thuê của tôi";
+}
+
+<div class="container my-5">
+    <h2 class="mb-4"><i class="fas fa-file-alt"></i> Yêu cầu thuê của tôi</h2>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Nhà</th>
+                        <th>Ngày gửi</th>
+                        <th>Thời gian thuê</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@request.House.Name</strong><br>
+                                <small class="text-muted">@request.House.Address</small>
+                            </td>
+                            <td>@request.RequestDate.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @request.StartDate.ToString("dd/MM/yyyy") -
+                                @request.EndDate.ToString("dd/MM/yyyy")
+                            </td>
+                            <td>
+                                @if (request.Status == "Pending")
+                                {
+                                    <span class="badge bg-warning">
+                                        <i class="fas fa-clock"></i> Chờ duyệt
+                                    </span>
+                                }
+                                else if (request.Status == "Approved")
+                                {
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check"></i> Đã duyệt
+                                    </span>
+                                }
+                                else if (request.Status == "Rejected")
+                                {
+                                    <span class="badge bg-danger">
+                                        <i class="fas fa-times"></i> Từ chối
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">
+                                        <i class="fas fa-ban"></i> Đã hủy
+                                    </span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-controller="RentalRequest" asp-action="Details"
+                                   asp-route-id="@request.Id"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-eye"></i> Xem
+                                </a>
+                                @if (request.Status == "Pending")
+                                {
+                                    <form method="post" asp-controller="RentalRequest"
+                                          asp-action="Cancel" asp-route-id="@request.Id"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc muốn hủy yêu cầu này?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-times"></i> Hủy
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">
+            <i class="fas fa-info-circle"></i> Bạn chưa có yêu cầu thuê nào.
+            <br>
+            <a asp-controller="House" asp-action="Search" class="btn btn-primary mt-3">
+                <i class="fas fa-search"></i> Tìm nhà ngay
+            </a>
+        </div>
+    }
+</div>

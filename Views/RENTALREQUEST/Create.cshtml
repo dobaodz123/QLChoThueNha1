@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Gửi yêu cầu thuê nhà";
+    var house = ViewBag.House as House;
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-paper-plane"></i> Gửi yêu cầu thuê nhà</h4>
+                </div>
+                <div class="card-body">
+                    <!-- House Info -->
+                    <div class="bg-light p-3 rounded mb-4">
+                        <h5 class="fw-bold">@house.Name</h5>
+                        <p class="mb-1"><i class="fas fa-map-marker-alt"></i> @house.Address</p>
+                        <p class="mb-1"><i class="fas fa-tag"></i> Giá: <strong>@house.Price.ToString("N0") đ/tháng</strong></p>
+                        <p class="mb-0"><i class="fas fa-ruler-combined"></i> Diện tích: @house.Area m²</p>
+                    </div>
+
+                    <form method="post" asp-controller="RentalRequest" asp-action="Create">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="houseId" value="@house.Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-alt"></i> Ngày bắt đầu thuê *
+                            </label>
+                            <input type="date" name="startDate" class="form-control" required
+                                   min="@DateTime.Today.ToString("yyyy-MM-dd")">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="fas fa-calendar-check"></i> Ngày kết thúc thuê *
+                            </label>
+                            <input type="date" name="endDate" class="form-control" required
+                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")">
+                            <small class="text-muted">Hợp đồng tối thiểu 1 tháng</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">
+                                <i class="fas fa-comment"></i> Ghi chú (tùy chọn)
+                            </label>
+                            <textarea name="note" class="form-control" rows="4"
+                                      placeholder="Nhập ghi chú hoặc yêu cầu đặc biệt..."></textarea>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            Sau khi gửi yêu cầu, admin sẽ xem xét và phản hồi trong vòng 24h.
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="fas fa-paper-plane"></i> Gửi yêu cầu
+                            </button>
+                            <a asp-controller="House" asp-action="Details" asp-route-id="@house.Id"
+                               class="btn btn-outline-secondary flex-fill">
+                                <i class="fas fa-times"></i> Hủy
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

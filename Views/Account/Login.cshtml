@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Đăng nhập";
+}
+
+<h2>Đăng nhập</h2>
+
+@if (ViewBag.Error != null)
+{
+    <p style="color:red">@ViewBag.Error</p>
+}
+
+<form asp-action="Login" method="post">
+    <div>
+        <label>Tài khoản</label>
+        <input name="username" />
+    </div>
+
+    <div>
+        <label>Mật khẩu</label>
+        <input name="password" type="password" />
+    </div>
+
+    <br />
+    <button type="submit">Đăng nhập</button>
+</form>

@@ -1,0 +1,53 @@
+﻿@model List<QlChoThueNha1.Models.House>
+
+@{
+    // Cast to a non-compile-time type to avoid referencing a missing type/namespace.
+    var types = ViewBag.HouseTypes as System.Collections.IEnumerable;
+}
+
+<h2>Danh sách nhà cho thuê</h2>
+
+<form method="get">
+    <input name="keyword" placeholder="Nhập địa điểm..." />
+
+    <select name="houseTypeId">
+        <option value="">-- Loại nhà --</option>
+        @if (types != null)
+        {
+            foreach (var obj in types)
+            {
+                var t = obj as dynamic;
+                <option value="@(t?.Id)">@t?.Name</option>
+            }
+        }
+    </select>
+
+    <button type="submit">Tìm kiếm</button>
+</form>
+
+<hr />
+
+<table border="1" cellpadding="8">
+    <tr>
+        <th>Tên</th>
+        <th>Địa chỉ</th>
+        <th>Giá</th>
+        <th>Diện tích</th>
+        <th></th>
+    </tr>
+
+    @foreach (var h in Model)
+    {
+        <tr>
+            <td>@h.Name</td>
+            <td>@h.Address</td>
+            <td>@h.Price</td>
+            <td>
+                @* Diện tích không hiển thị vì thuộc tính 'Area' không tồn tại trong House *@
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@h.Id">Chi tiết</a>
+            </td>
+        </tr>
+    }
+</table>
