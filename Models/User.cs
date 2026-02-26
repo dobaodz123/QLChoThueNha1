@@ -25,6 +25,5 @@ namespace QlChoThueNha1.Models
         public DateTime? CreatedAt { get; set; }
 
         public ICollection<RentalRequest>? RentalRequests { get; set; }
-        public string Username { get; internal set; }
     }
 }

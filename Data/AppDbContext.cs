@@ -50,7 +50,6 @@ namespace QlChoThueNha1.Data
                 new User
                 {
                     UserId = 1,
-                    Username = "admin",
                     Password = "123456", // Trong thực tế nên hash
                     Email = "admin@gmail.com",
                     FullName = "Quản trị viên",
@@ -69,7 +68,7 @@ namespace QlChoThueNha1.Data
                 new User
                 {
                     UserId = 3,
-                    Username = "customer2",
+
                     Password = "123456",
                     Email = "customer2@gmail.com",
                     FullName = "Trần Thị B",
