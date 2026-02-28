@@ -1,34 +1,643 @@
 ﻿@model QlChoThueNha1.Models.User
-
-<h2>Đăng ký</h2>
-
-<form asp-action="Register" method="post">
-
-    <div asp-validation-summary="All" class="text-danger"></div>
-
-    <div>
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" class="form-control" />
-        <span asp-validation-for="FullName" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <button type="submit">Đăng ký</button>
-</form>
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+@{
+    ViewData["Title"] = "Register";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient( 180deg, #0a1a2e 0%, #0d2a4a 20%, #1a3a6a 40%, #1a5a8a 60%, #1a7aaa 75%, #0d4a6a 90%, #0a1a2e 100% );
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(100, 200, 255, 0.6);
+            animation: float var(--duration, 6s) ease-in-out infinite var(--delay, 0s);
+        }
+
+        @@keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: var(--min-op, 0.3);
+            }
+
+            33% {
+                transform: translateY(-30px) translateX(15px) scale(1.1);
+                opacity: 0.8;
+            }
+
+            66% {
+                transform: translateY(-15px) translateX(-10px) scale(0.9);
+                opacity: 0.5;
+            }
+        }
+
+        /* Aurora effect */
+        .aurora {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .aurora-band {
+            position: absolute;
+            width: 200%;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.15;
+            animation: aurora-move var(--dur, 8s) ease-in-out infinite var(--del, 0s) alternate;
+        }
+
+            .aurora-band:nth-child(1) {
+                background: linear-gradient(90deg, #00ffaa, #0088ff);
+                top: 10%;
+                left: -50%;
+                --dur: 9s;
+            }
+
+            .aurora-band:nth-child(2) {
+                background: linear-gradient(90deg, #aa00ff, #0044ff);
+                top: 30%;
+                left: -30%;
+                --dur: 11s;
+                --del: 2s;
+            }
+
+            .aurora-band:nth-child(3) {
+                background: linear-gradient(90deg, #00ddff, #00ffaa);
+                top: 20%;
+                left: -60%;
+                --dur: 7s;
+                --del: 1s;
+            }
+
+        @@keyframes aurora-move {
+            0% {
+                transform: translateX(0) rotate(-3deg);
+            }
+
+            100% {
+                transform: translateX(30%) rotate(3deg);
+            }
+        }
+
+        /* Stars */
+        .stars {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 3s) ease-in-out infinite var(--delay, 0s);
+        }
+
+        @@keyframes twinkle {
+            0%, 100% {
+                opacity: var(--min-op, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.4);
+            }
+        }
+
+        /* Shooting stars */
+        .shooting-star {
+            position: fixed;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ddff, transparent);
+            transform: rotate(-25deg);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .s1 {
+            top: 8%;
+            right: 20%;
+            width: 100px;
+            animation: shoot 5s ease-in-out infinite 0.5s;
+        }
+
+        .s2 {
+            top: 25%;
+            right: 10%;
+            width: 70px;
+            animation: shoot 7s ease-in-out infinite 2s;
+        }
+
+        .s3 {
+            top: 15%;
+            left: 15%;
+            width: 80px;
+            animation: shoot 6s ease-in-out infinite 4s;
+            transform: rotate(25deg);
+        }
+
+        @@keyframes shoot {
+            0% {
+                opacity: 0;
+                transform: rotate(-25deg) translateX(0);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            40% {
+                opacity: 0;
+                transform: rotate(-25deg) translateX(-100px);
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+
+        /* Ocean/water at bottom */
+        .water {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        /* Login box */
+        .register-box {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .register-container {
+            width: 380px;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .top-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+            .top-header span {
+                color: rgba(150, 220, 255, 0.9);
+                font-size: 12px;
+                font-weight: 300;
+                letter-spacing: 3px;
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 8px;
+            }
+
+            .top-header header {
+                color: #fff;
+                font-size: 30px;
+                font-weight: 600;
+                display: block;
+                text-shadow: 0 0 30px rgba(0, 180, 255, 0.5);
+            }
+
+            .top-header .subtitle {
+                color: rgba(150, 220, 255, 0.7);
+                font-size: 12px;
+                margin-top: 6px;
+                display: block;
+            }
+
+        .error-msg {
+            background: rgba(255, 80, 80, 0.15);
+            border: 1px solid rgba(255, 80, 80, 0.4);
+            color: #ffaaaa;
+            border-radius: 12px;
+            padding: 10px 15px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+            .input-field input.input {
+                height: 50px;
+                width: 100%;
+                border: 1px solid rgba(100, 180, 255, 0.2);
+                outline: none;
+                border-radius: 30px;
+                color: #fff;
+                padding: 0 20px 0 50px;
+                background: rgba(0, 80, 160, 0.25);
+                backdrop-filter: blur(10px);
+                font-size: 14px;
+                font-family: 'Poppins', sans-serif;
+                transition: all 0.3s ease;
+            }
+
+                .input-field input.input:focus {
+                    background: rgba(0, 100, 200, 0.35);
+                    border-color: rgba(100, 200, 255, 0.6);
+                    box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+                }
+
+                .input-field input.input::placeholder {
+                    color: rgba(150, 210, 255, 0.6);
+                }
+
+            .input-field i {
+                position: absolute;
+                top: 50%;
+                left: 17px;
+                transform: translateY(-50%);
+                color: rgba(100, 200, 255, 0.8);
+                font-size: 18px;
+                pointer-events: none;
+                transition: color 0.3s;
+            }
+
+            .input-field:focus-within i {
+                color: rgba(100, 220, 255, 1);
+            }
+
+        /* Validation errors */
+        .field-error {
+            color: #ff8888;
+            font-size: 11px;
+            margin-top: 5px;
+            padding-left: 15px;
+        }
+
+        .input-field input.input-error {
+            border-color: rgba(255, 80, 80, 0.6) !important;
+        }
+
+        .submit-btn {
+            height: 50px;
+            width: 100%;
+            border: none;
+            outline: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, rgba(0, 150, 255, 0.8), rgba(0, 220, 180, 0.8));
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .submit-btn::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .submit-btn:hover::before {
+                left: 100%;
+            }
+
+            .submit-btn:hover {
+                background: linear-gradient(135deg, rgba(0, 180, 255, 1), rgba(0, 255, 200, 0.9));
+                box-shadow: 0 8px 30px rgba(0, 150, 255, 0.4);
+                transform: translateY(-2px);
+            }
+
+            .submit-btn:active {
+                transform: translateY(0);
+            }
+
+        .bottom-link {
+            text-align: center;
+            margin-top: 18px;
+            font-size: 13px;
+            color: rgba(150, 210, 255, 0.7);
+        }
+
+            .bottom-link a {
+                color: rgba(100, 220, 255, 1);
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.2s;
+            }
+
+                .bottom-link a:hover {
+                    color: #fff;
+                    text-decoration: underline;
+                }
+
+        /* Glowing orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+            animation: orb-pulse var(--dur, 6s) ease-in-out infinite var(--del, 0s) alternate;
+        }
+
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: #0088ff;
+            top: -100px;
+            right: -100px;
+            --dur: 7s;
+        }
+
+        .orb2 {
+            width: 300px;
+            height: 300px;
+            background: #00ffcc;
+            bottom: -50px;
+            left: -50px;
+            --dur: 9s;
+            --del: 2s;
+        }
+
+        .orb3 {
+            width: 250px;
+            height: 250px;
+            background: #aa44ff;
+            top: 40%;
+            left: 10%;
+            --dur: 5s;
+            --del: 1s;
+        }
+
+        @@keyframes orb-pulse {
+            from {
+                transform: scale(1);
+                opacity: 0.1;
+            }
+
+            to {
+                transform: scale(1.3);
+                opacity: 0.2;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background effects -->
+    <div class="aurora">
+        <div class="aurora-band"></div>
+        <div class="aurora-band"></div>
+        <div class="aurora-band"></div>
+    </div>
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+    <div class="stars" id="stars"></div>
+    <div class="particles" id="particles"></div>
+    <div class="shooting-star s1"></div>
+    <div class="shooting-star s2"></div>
+    <div class="shooting-star s3"></div>
+
+    <!-- Mountain silhouettes -->
+    <svg viewBox="0 0 1440 300" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"
+         style="position:fixed;bottom:0;left:0;width:100%;height:40%;z-index:2;pointer-events:none;">
+        <polygon points="0,300 200,120 380,200 560,80 740,160 920,60 1100,140 1280,90 1440,130 1440,300" fill="#051525" opacity="0.7" />
+        <polygon points="0,300 150,180 300,230 500,150 680,210 860,120 1040,190 1200,140 1440,170 1440,300" fill="#030e1a" opacity="0.9" />
+    </svg>
+
+    <!-- Water reflection -->
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"
+         style="position:fixed;bottom:0;left:0;width:100%;height:8%;z-index:4;pointer-events:none;">
+        <rect width="1440" height="80" fill="#030e1a" />
+        <path d="M0,20 Q180,5 360,20 Q540,35 720,20 Q900,5 1080,20 Q1260,35 1440,20 L1440,80 L0,80 Z"
+              fill="rgba(0,100,180,0.3)" style="animation: wave 3s ease-in-out infinite alternate;" />
+    </svg>
+
+    <style>
+        @@keyframes wave {
+            from {
+                d: path('M0,20 Q180,5 360,20 Q540,35 720,20 Q900,5 1080,20 Q1260,35 1440,20 L1440,80 L0,80 Z');
+            }
+
+            to {
+                d: path('M0,30 Q180,15 360,30 Q540,45 720,30 Q900,15 1080,30 Q1260,45 1440,30 L1440,80 L0,80 Z');
+            }
+        }
+    </style>
+
+    <!-- Register Form -->
+    <div class="register-box">
+        <div class="register-container">
+
+            <div class="top-header">
+                <span>✦ Property Management ✦</span>
+                <header>Create Account</header>
+                <span class="subtitle">Join us and find your perfect home</span>
+            </div>
+
+            <div asp-validation-summary="All" class="error-msg"></div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div style="padding:10px;margin-bottom:15px;background:#f8d7da;color:#721c24;border-radius:5px;text-align:center;">
+                    @ViewBag.Error
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div style="padding:10px;margin-bottom:15px;background:#d4edda;color:#155724;border-radius:5px;text-align:center;">
+                    @TempData["Success"]
+                </div>
+            }
+            <form asp-action="Register" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+
+                <div class="input-field">
+                    <input asp-for="FullName" class="input" placeholder="Full Name" autocomplete="off" />
+                    <i class="bx bx-user"></i>
+                    <span asp-validation-for="FullName" class="field-error"></span>
+                </div>
+
+                <div class="input-field">
+                    <input asp-for="Email" class="input" placeholder="Email Address" autocomplete="off" />
+                    <i class="bx bx-envelope"></i>
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+
+                <div class="input-field">
+                    <input asp-for="Password" type="password" class="input" placeholder="Password" />
+                    <i class="bx bx-lock-alt"></i>
+                    <span asp-validation-for="Password" class="field-error"></span>
+                </div>
+
+                <div class="input-field">
+                    <input type="password" name="confirmPassword" class="input" placeholder="Confirm Password" id="confirmPwd" />
+                    <i class="bx bx-lock-open-alt"></i>
+                    <span class="field-error" id="confirmError"></span>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Create Account →
+                </button>
+            </form>
+
+
+            <div class="bottom-link">
+                Already have an account? <a asp-action="Login" asp-controller="Account">Sign In</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 2.5 + 0.5;
+            star.style.cssText = `
+                width: ${size}px; height: ${size}px;
+                top: ${Math.random() * 75}%;
+                left: ${Math.random() * 100}%;
+                --duration: ${2 + Math.random() * 5}s;
+                --delay: ${Math.random() * 5}s;
+                --min-op: ${0.15 + Math.random() * 0.4};
+            `;
+            starsContainer.appendChild(star);
+        }
+
+        // Floating particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            const size = Math.random() * 4 + 2;
+            p.style.cssText = `
+                width: ${size}px; height: ${size}px;
+                top: ${Math.random() * 80}%;
+                left: ${Math.random() * 100}%;
+                --duration: ${4 + Math.random() * 8}s;
+                --delay: ${Math.random() * 6}s;
+                --min-op: ${0.2 + Math.random() * 0.3};
+                background: rgba(${Math.random() > 0.5 ? '100,200,255' : '0,255,200'}, 0.5);
+            `;
+            particlesContainer.appendChild(p);
+        }
+
+        // Confirm password validation
+        const confirmPwd = document.getElementById('confirmPwd');
+        const confirmError = document.getElementById('confirmError');
+        const form = document.querySelector('form');
+
+        confirmPwd.addEventListener('input', () => {
+            const pwd = document.querySelector('input[name="Password"]').value;
+            if (confirmPwd.value && confirmPwd.value !== pwd) {
+                confirmError.textContent = '⚠ Passwords do not match';
+                confirmPwd.style.borderColor = 'rgba(255,80,80,0.6)';
+            } else {
+                confirmError.textContent = '';
+                confirmPwd.style.borderColor = '';
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            const pwd = document.querySelector('input[name="Password"]').value;
+            if (confirmPwd.value !== pwd) {
+                e.preventDefault();
+                confirmError.textContent = '⚠ Passwords do not match';
+                confirmPwd.style.borderColor = 'rgba(255,80,80,0.6)';
+            }
+        });
+
+        // Button loading effect
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            setTimeout(() => {
+                if (!confirmError.textContent) {
+                    this.textContent = 'Creating account...';
+                    this.style.opacity = '0.8';
+                }
+            }, 100);
+        });
+    </script>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

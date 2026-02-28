@@ -1,53 +1,490 @@
 ﻿@model List<QlChoThueNha1.Models.House>
-
 @{
-    // Cast to a non-compile-time type to avoid referencing a missing type/namespace.
     var types = ViewBag.HouseTypes as System.Collections.IEnumerable;
+    ViewData["Title"] = "Tìm nhà";
 }
 
-<h2>Danh sách nhà cho thuê</h2>
-
-<form method="get">
-    <input name="keyword" placeholder="Nhập địa điểm..." />
-
-    <select name="houseTypeId">
-        <option value="">-- Loại nhà --</option>
-        @if (types != null)
-        {
-            foreach (var obj in types)
-            {
-                var t = obj as dynamic;
-                <option value="@(t?.Id)">@t?.Name</option>
-            }
-        }
-    </select>
-
-    <button type="submit">Tìm kiếm</button>
-</form>
-
-<hr />
-
-<table border="1" cellpadding="8">
-    <tr>
-        <th>Tên</th>
-        <th>Địa chỉ</th>
-        <th>Giá</th>
-        <th>Diện tích</th>
-        <th></th>
-    </tr>
-
-    @foreach (var h in Model)
-    {
-        <tr>
-            <td>@h.Name</td>
-            <td>@h.Address</td>
-            <td>@h.Price</td>
-            <td>
-                @* Diện tích không hiển thị vì thuộc tính 'Area' không tồn tại trong House *@
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@h.Id">Chi tiết</a>
-            </td>
-        </tr>
+<style>
+    .page-hero {
+        background: linear-gradient(135deg, #1a6cff 0%, #0f4fd4 50%, #0d1117 100%);
+        padding: 60px 0 80px;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: -40px;
     }
-</table>
+
+    .page-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .page-hero h1 {
+        color: white;
+        font-weight: 800;
+        font-size: 2rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+    }
+
+    .page-hero p {
+        color: rgba(255,255,255,0.7);
+        font-size: 0.95rem;
+    }
+
+    .search-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+        position: relative;
+        z-index: 10;
+        border: none;
+    }
+
+    .search-card .form-control,
+    .search-card .form-select {
+        border: 1.5px solid rgba(0,0,0,0.1);
+        border-radius: 12px;
+        height: 48px;
+        font-size: 0.9rem;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.2s;
+        padding-left: 42px;
+    }
+
+    .search-card .form-control:focus,
+    .search-card .form-select:focus {
+        border-color: #1a6cff;
+        box-shadow: 0 0 0 4px rgba(26,108,255,0.1);
+    }
+
+    .search-card .form-select {
+        padding-left: 16px;
+    }
+
+    .input-wrapper {
+        position: relative;
+    }
+
+    .input-wrapper i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 14px;
+        z-index: 5;
+    }
+
+    .btn-search {
+        background: linear-gradient(135deg, #1a6cff, #4d9fff);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        height: 48px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.2s;
+        box-shadow: 0 4px 14px rgba(26,108,255,0.3);
+        padding: 0 24px;
+    }
+
+    .btn-search:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(26,108,255,0.4);
+        color: white;
+    }
+
+    .btn-add {
+        background: linear-gradient(135deg, #00c853, #00a846);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.2s;
+        box-shadow: 0 4px 14px rgba(0,200,83,0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(0,200,83,0.4);
+        color: white;
+    }
+
+    /* House Cards */
+    .house-card {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: none;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        animation: fadeInUp 0.5s ease forwards;
+        opacity: 0;
+    }
+
+    @for (int i = 0; i < 20; i++) {
+        <text>
+        .house-card:nth-child(@(i+1)) { animation-delay: @(i * 0.07)s; }
+        </text>
+    }
+
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .house-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 50px rgba(0,0,0,0.13);
+    }
+
+    .house-img-wrap {
+        position: relative;
+        overflow: hidden;
+        height: 210px;
+        flex-shrink: 0;
+    }
+
+    .house-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .house-card:hover .house-img-wrap img {
+        transform: scale(1.06);
+    }
+
+    .house-badge {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        padding: 5px 12px;
+        border-radius: 30px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        backdrop-filter: blur(10px);
+    }
+
+    .badge-rented {
+        background: rgba(255,59,59,0.9);
+        color: white;
+    }
+
+    .badge-available {
+        background: rgba(0,200,83,0.9);
+        color: white;
+    }
+
+    .house-type-tag {
+        position: absolute;
+        top: 14px;
+        left: 14px;
+        background: rgba(0,0,0,0.55);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        backdrop-filter: blur(8px);
+        letter-spacing: 0.3px;
+    }
+
+    .house-card-body {
+        padding: 18px 20px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .house-name {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #0d1117;
+        margin-bottom: 8px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .house-address {
+        color: #6b7280;
+        font-size: 0.82rem;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start;
+        gap: 5px;
+        line-height: 1.5;
+    }
+
+    .house-address i {
+        color: #ff6b35;
+        font-size: 11px;
+        margin-top: 2px;
+        flex-shrink: 0;
+    }
+
+    .house-price {
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #1a6cff;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .house-price::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 18px;
+        background: linear-gradient(180deg, #1a6cff, #4d9fff);
+        border-radius: 2px;
+    }
+
+    .house-actions {
+        margin-top: auto;
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-detail {
+        flex: 1;
+        background: rgba(26,108,255,0.06);
+        color: #1a6cff;
+        border: 1.5px solid rgba(26,108,255,0.2);
+        border-radius: 10px;
+        padding: 9px 14px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.2s;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .btn-detail:hover {
+        background: #1a6cff;
+        color: white;
+        border-color: #1a6cff;
+    }
+
+    .btn-edit {
+        width: 38px;
+        height: 38px;
+        background: rgba(255,165,0,0.08);
+        color: #f59e0b;
+        border: 1.5px solid rgba(255,165,0,0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        transition: all 0.2s;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+
+    .btn-edit:hover {
+        background: #f59e0b;
+        color: white;
+        border-color: #f59e0b;
+    }
+
+    .btn-delete {
+        width: 38px;
+        height: 38px;
+        background: rgba(255,59,59,0.08);
+        color: #ef4444;
+        border: 1.5px solid rgba(255,59,59,0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        transition: all 0.2s;
+        text-decoration: none;
+        flex-shrink: 0;
+    }
+
+    .btn-delete:hover {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: #9ca3af;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 16px;
+        color: #d1d5db;
+    }
+
+    .empty-state p {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .results-info {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .results-count {
+        background: rgba(26,108,255,0.1);
+        color: #1a6cff;
+        font-weight: 700;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+    }
+</style>
+
+<!-- Hero -->
+<div class="page-hero">
+    <div class="container position-relative">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="fas fa-search me-2"></i>Tìm nhà cho thuê</h1>
+                <p>Khám phá hàng trăm căn nhà phù hợp với nhu cầu của bạn</p>
+            </div>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-action="Create" class="btn-add">
+                    <i class="fas fa-plus"></i> Thêm nhà mới
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="container" style="padding-top: 60px; padding-bottom: 60px;">
+
+    <!-- Search Box -->
+    <div class="search-card mb-5">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-6">
+                <label class="form-label fw-600 text-muted" style="font-size:0.8rem; letter-spacing:0.5px; text-transform:uppercase;">Tên nhà / địa điểm</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input name="keyword" class="form-control" placeholder="Nhập tên nhà hoặc địa điểm..." />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-600 text-muted" style="font-size:0.8rem; letter-spacing:0.5px; text-transform:uppercase;">Loại nhà</label>
+                <select name="houseTypeId" class="form-select">
+                    <option value="">-- Tất cả loại nhà --</option>
+                    @if (types != null)
+                    {
+                        foreach (var obj in types)
+                        {
+                            var t = obj as dynamic;
+                            <option value="@(t?.Id)">@t?.Name</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn-search w-100">
+                    <i class="fas fa-search me-2"></i>Tìm kiếm
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results -->
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <i class="fas fa-home"></i>
+            <p>Không tìm thấy nhà phù hợp.<br>
+               <span style="font-size:0.875rem; font-weight:400;">Hãy thử thay đổi từ khóa tìm kiếm.</span>
+            </p>
+        </div>
+    }
+    else
+    {
+        <div class="results-info">
+            <span>Tìm thấy</span>
+            <span class="results-count">@Model.Count căn nhà</span>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4">
+                    <div class="house-card">
+                        <div class="house-img-wrap">
+                            <img src="@(string.IsNullOrEmpty(item.ImageUrl) ? "https://placehold.co/400x210?text=No+Image" : item.ImageUrl)"
+                                 onerror="this.src='https://placehold.co/400x210?text=No+Image'"
+                                 alt="@item.Name" />
+
+                            @if (item.Status == "Rented")
+                            {
+                                <span class="house-badge badge-rented"><i class="fas fa-lock me-1"></i>Đã cho thuê</span>
+                            }
+                            else
+                            {
+                                <span class="house-badge badge-available"><i class="fas fa-check me-1"></i>Còn trống</span>
+                            }
+                        </div>
+
+                        <div class="house-card-body">
+                            <div class="house-name">@item.Name</div>
+                            <div class="house-address">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>@item.Address</span>
+                            </div>
+                            <div class="house-price">
+                                @item.Price.ToString("N0") đ / tháng
+                            </div>
+                            <div class="house-actions">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn-detail">
+                                    <i class="fas fa-eye me-1"></i> Xem chi tiết
+                                </a>
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-edit">
+                                        <i class="fas fa-pen"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-delete"
+                                       onclick="return confirm('Xóa nhà này?')">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

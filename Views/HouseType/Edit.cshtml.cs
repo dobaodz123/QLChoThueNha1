@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace QlChoThueNha1.Views.RentalRequest
+namespace QlChoThueNha1.Views.HouseType
 {
-    public class MyRequestsModel : PageModel
+    public class EditModel : PageModel
     {
         public void OnGet()
         {

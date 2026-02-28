@@ -6,6 +6,8 @@ namespace QlChoThueNha1.Models
 {
     public class User
     {
+        internal object Id;
+
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Họ và tên không được để trống")]
@@ -25,5 +27,6 @@ namespace QlChoThueNha1.Models
         public DateTime? CreatedAt { get; set; }
 
         public ICollection<RentalRequest>? RentalRequests { get; set; }
+        
     }
 }

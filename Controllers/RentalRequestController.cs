@@ -1,57 +1,135 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using QlChoThueNha1.Data;
 using QlChoThueNha1.Models;
+using System.Security.Claims;
 
-public class RentalRequestController : Controller
+namespace QlChoThueNha1.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public RentalRequestController(AppDbContext context)
+    public class RentalRequestController : Controller
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public IActionResult Create(int houseId)
-    {
-        ViewBag.HouseId = houseId;
-        return View();
-    }
-
-    [HttpPost]
-    public IActionResult Create(RentalRequest req)
-    {
-        req.Status = "pending";
-        _context.RentalRequests.Add(req);
-        _context.SaveChanges();
-        return RedirectToAction("Index", "House");
-    }
-
-    // Converted property into an action method and fixed the TenantName reference by
-    // resolving the current user and filtering by `UserId` which exists on `RentalRequest`.
-    public IActionResult MyRequests()
-    {
-        var username = HttpContext.Session.GetString("Username");
-        if (string.IsNullOrEmpty(username))
+        public RentalRequestController(AppDbContext context)
         {
-            // No username in session — return an empty list to the view.
-            // Alternatively you could RedirectToAction("Login", "Account") depending on app flow.
-            return View(new List<RentalRequest>());
+            _context = context;
         }
 
-        User? user = _context.Users.FirstOrDefault(u => u.Username == username);
-        if (user == null)
+        // ===================== CREATE GET =====================
+        [Authorize]
+        public IActionResult Create(int houseId)
         {
-            // No matching user found — return an empty list.
-            return View(new List<RentalRequest>());
+            var house = _context.Houses.FirstOrDefault(h => h.Id == houseId);
+            if (house == null)
+                return NotFound();
+
+            var model = new RentalRequest
+            {
+                HouseId = houseId
+            };
+
+            ViewBag.House = house;
+            return View(model);
         }
 
-        var requests = _context.RentalRequests
-            .Where(r => r.UserId == user.UserId)
-            .ToList();
+        // ===================== CREATE POST =====================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public IActionResult Create(RentalRequest rentalRequest)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Name);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
 
-        return View(requests);
+            if (user == null)
+                return Unauthorized();
+
+            if (rentalRequest.EndDate <= rentalRequest.StartDate)
+            {
+                TempData["Error"] = "Ngày kết thúc phải lớn hơn ngày bắt đầu!";
+                ViewBag.House = _context.Houses.FirstOrDefault(h => h.Id == rentalRequest.HouseId);
+                return View(rentalRequest);
+            }
+
+            rentalRequest.UserId = user.UserId;
+            rentalRequest.RequestDate = DateTime.Now;
+            rentalRequest.Status = "Pending";
+
+            _context.RentalRequests.Add(rentalRequest);
+            _context.SaveChanges();
+
+            TempData["Success"] = "Gửi yêu cầu thuê thành công! Vui lòng chờ xét duyệt.";
+            return RedirectToAction("MyRequests");
+        }
+
+        // ===================== MY REQUESTS =====================
+        [Authorize]
+        public IActionResult MyRequests()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Name);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+
+            if (user == null)
+                return Unauthorized();
+
+            var requests = _context.RentalRequests
+                .Include(r => r.House)
+                .Where(r => r.UserId == user.UserId)
+                .ToList();
+
+            return View(requests);
+        }
+
+        // ===================== INDEX (ADMIN) =====================
+        public IActionResult Index()
+        {
+            var requests = _context.RentalRequests
+                .Include(r => r.House)
+                .Include(r => r.User)
+                .ToList();
+
+            return View(requests);
+        }
+
+        // ===================== DETAILS =====================
+        public IActionResult Details(int id)
+        {
+            var request = _context.RentalRequests
+                .Include(r => r.House)
+                .Include(r => r.User)
+                .FirstOrDefault(r => r.Id == id);
+
+            if (request == null)
+                return NotFound();
+
+            return View(request);
+        }
+
+        // ===================== APPROVE =====================
+        public IActionResult Approve(int id)
+        {
+            var request = _context.RentalRequests.Find(id);
+            if (request != null)
+            {
+                request.Status = "Approved";
+                _context.SaveChanges();
+                TempData["Success"] = "Đã duyệt yêu cầu thuê thành công!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ===================== REJECT =====================
+        public IActionResult Reject(int id)
+        {
+            var request = _context.RentalRequests.Find(id);
+            if (request != null)
+            {
+                request.Status = "Rejected";
+                _context.SaveChanges();
+                TempData["Error"] = "Đã từ chối yêu cầu thuê!";
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

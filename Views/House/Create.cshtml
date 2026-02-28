@@ -1,0 +1,84 @@
+﻿@model QlChoThueNha1.Models.House
+@{
+    ViewData["Title"] = "Thêm nhà mới";
+}
+
+<div class="container mt-5">
+    <div class="card shadow p-4 rounded-4" style="max-width:700px; margin:auto">
+        <h3 class="text-center text-success mb-4">🏠 Thêm nhà mới</h3>
+
+        <form asp-action="Create" method="post">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Tên nhà..." />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Address" class="form-label"></label>
+                <input asp-for="Address" class="form-control" placeholder="Địa chỉ..." />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Price" class="form-label"></label>
+                    <input asp-for="Price" class="form-control" placeholder="VD: 3000000" />
+                    <span asp-validation-for="Price" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Area" class="form-label"></label>
+                    <input asp-for="Area" class="form-control" placeholder="VD: 30" />
+                    <span asp-validation-for="Area" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="HouseTypeId" class="form-label">Loại nhà</label>
+                <select asp-for="HouseTypeId" class="form-select">
+                    <option value="">-- Chọn loại nhà --</option>
+                    @foreach (var t in ViewBag.HouseTypes as List<QlChoThueNha1.Models.HouseType>)
+                    {
+                        <option value="@t.Id">@t.Name</option>
+                    }
+                </select>
+                <span asp-validation-for="HouseTypeId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3" placeholder="Mô tả nhà..."></textarea>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">🖼️ Link hình ảnh</label>
+                <input asp-for="ImageUrl" class="form-control"
+                       placeholder="VD: https://example.com/image.jpg"
+                       id="imageUrlInput" />
+                <small class="text-muted">Chuột phải vào ảnh trên web → Copy image address → Dán vào đây</small>
+
+                <div class="mt-2" id="previewBox" style="display:none">
+                    <p class="text-muted mb-1">Preview:</p>
+                    <img id="imgPreview" src=""
+                         style="max-height:200px; border-radius:8px; border:1px solid #ddd;"
+                         onerror="this.src='https://placehold.co/400x200?text=Link+lỗi'" />
+                </div>
+            </div>
+
+            @section Scripts {
+                <script>
+                    document.getElementById('imageUrlInput').addEventListener('input', function () {
+                        var url = this.value.trim();
+                        var preview = document.getElementById('imgPreview');
+                        var box = document.getElementById('previewBox');
+                        if (url) {
+                            preview.src = url;
+                            box.style.display = 'block';
+                        } else {
+                            box.style.display = 'none';
+                        }
+                    });
+                </script>
+            }
+            <button type="submit" class="btn btn-success w-100">
+                <i class="fas fa-plus"></i> Thêm nhà
+            </button>
+            <a asp-action="Index" class="btn btn-secondary w-100 mt-2">Quay lại</a>
+        </form>
+    </div>
+</div>

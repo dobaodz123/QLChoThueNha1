@@ -10,39 +10,41 @@ namespace QlChoThueNha1.Models
         public int Id { get; set; }
 
         // Foreign key to House
+        [Required]
         public int HouseId { get; set; }
 
-        // Navigation property
         [ForeignKey("HouseId")]
         public House House { get; set; }
 
-        // Foreign key to User (Customer/Tenant)
+        // Foreign key to User
+        [Required]
         public int UserId { get; set; }
 
-        // Navigation property to User
         [ForeignKey("UserId")]
         public User User { get; set; }
 
         // Thời gian thuê
         [Required]
+        [DataType(DataType.Date)]
         [Display(Name = "Ngày bắt đầu")]
         public DateTime StartDate { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         [Display(Name = "Ngày kết thúc")]
         public DateTime EndDate { get; set; }
 
         [Display(Name = "Ngày gửi yêu cầu")]
         public DateTime RequestDate { get; set; } = DateTime.Now;
 
-        // Trạng thái: Pending / Approved / Rejected
+        // Trạng thái
         [Required]
         [MaxLength(50)]
         public string Status { get; set; } = "Pending";
 
-        // Ghi chú từ khách thuê
+        // Ghi chú
         [MaxLength(500)]
-        [Display(Name = "Ghi chú")]
+        [Display(Name = "Mô tả")]
         public string? Note { get; set; }
     }
 }

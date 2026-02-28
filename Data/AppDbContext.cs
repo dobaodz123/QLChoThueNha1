@@ -9,10 +9,9 @@ namespace QlChoThueNha1.Data
             : base(options)
         {
         }
-
+        public DbSet<HouseType> HouseTypes { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<House> Houses { get; set; }
-        public DbSet<HouseType> HouseTypes { get; set; }
         public DbSet<RentalRequest> RentalRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -58,7 +57,7 @@ namespace QlChoThueNha1.Data
                 new User
                 {
                     UserId = 2,
-                    Username = "customer1",
+
                     Password = "123456",
                     Email = "customer1@gmail.com",
                     FullName = "Nguyễn Văn A",
@@ -183,4 +182,5 @@ namespace QlChoThueNha1.Data
                 .OnDelete(DeleteBehavior.Restrict);
         }
     }
+
 }

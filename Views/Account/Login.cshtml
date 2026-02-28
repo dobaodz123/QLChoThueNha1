@@ -1,25 +1,397 @@
 ﻿@{
-    ViewData["Title"] = "Đăng nhập";
+    ViewData["Title"] = "Login";
+    Layout = null;
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-<h2>Đăng nhập</h2>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
 
-@if (ViewBag.Error != null)
-{
-    <p style="color:red">@ViewBag.Error</p>
-}
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: linear-gradient( 180deg, #1a0a2e 0%, #2d1040 15%, #5c1a4a 35%, #a0254a 55%, #d4463a 70%, #e8622a 80%, #c44a20 90%, #1a1a2e 100% );
+        }
 
-<form asp-action="Login" method="post">
-    <div>
-        <label>Tài khoản</label>
-        <input name="username" />
+        .moon {
+            position: fixed;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 35%, #c8a882 0%, #b8956a 30%, #9a7a55 60%, #7a5f40 100%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -62%);
+            opacity: 0.55;
+            box-shadow: 0 0 60px 20px rgba(200, 168, 130, 0.15);
+            z-index: 1;
+        }
+
+            .moon::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: 50%;
+                background: radial-gradient(circle at 30% 30%, transparent 40%, rgba(0,0,0,0.3) 100%);
+            }
+
+        .stars {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 3s) ease-in-out infinite var(--delay, 0s);
+        }
+
+        @@keyframes twinkle {
+            0%, 100% {
+                opacity: var(--min-op, 0.3);
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 1;
+                transform: scale(1.3);
+            }
+        }
+
+        .shooting-star {
+            position: fixed;
+            top: 12%;
+            right: 18%;
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, white, transparent);
+            transform: rotate(-25deg);
+            z-index: 2;
+            animation: shoot 4s ease-in-out infinite 1s;
+        }
+
+        .shooting-star2 {
+            position: fixed;
+            top: 38%;
+            right: 8%;
+            width: 70px;
+            height: 1.5px;
+            background: linear-gradient(90deg, transparent, rgba(255,200,150,0.9), transparent);
+            transform: rotate(-30deg);
+            z-index: 2;
+            animation: shoot 5s ease-in-out infinite 3s;
+        }
+
+        @@keyframes shoot {
+            0% {
+                opacity: 0;
+                transform: rotate(-25deg) translateX(0);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            40% {
+                opacity: 0;
+                transform: rotate(-25deg) translateX(-80px);
+            }
+
+            100% {
+                opacity: 0;
+                transform: rotate(-25deg) translateX(-80px);
+            }
+        }
+
+        .login-box {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        .login-container {
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            padding: 0 15px;
+            margin-bottom: 80px;
+        }
+
+        .top-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+            .top-header span {
+                color: rgba(255,255,255,0.85);
+                font-size: 13px;
+                font-weight: 300;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 6px;
+            }
+
+            .top-header header {
+                color: #fff;
+                font-size: 32px;
+                font-weight: 600;
+                display: block;
+                text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            }
+
+        .error-msg {
+            background: rgba(255, 80, 80, 0.2);
+            border: 1px solid rgba(255, 80, 80, 0.4);
+            color: #ffaaaa;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+            .input-field input.input {
+                height: 48px;
+                width: 100%;
+                border: 1px solid rgba(255,255,255,0.1);
+                outline: none;
+                border-radius: 30px;
+                color: #fff;
+                padding: 0 20px 0 48px;
+                background: rgba(255,255,255,0.12);
+                backdrop-filter: blur(6px);
+                font-size: 14px;
+                font-family: 'Poppins', sans-serif;
+                transition: background 0.3s;
+            }
+
+                .input-field input.input:focus {
+                    background: rgba(255,255,255,0.18);
+                    border-color: rgba(255,255,255,0.25);
+                }
+
+                .input-field input.input::placeholder {
+                    color: rgba(255,255,255,0.7);
+                }
+
+            .input-field i {
+                position: absolute;
+                top: 50%;
+                left: 17px;
+                transform: translateY(-50%);
+                color: rgba(255,255,255,0.8);
+                font-size: 18px;
+                pointer-events: none;
+            }
+
+            .input-field input.submit {
+                height: 48px;
+                width: 100%;
+                border: none;
+                outline: none;
+                border-radius: 30px;
+                background: rgba(255,255,255,0.75);
+                color: #3a1a4a;
+                font-size: 15px;
+                font-weight: 600;
+                font-family: 'Poppins', sans-serif;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+                .input-field input.submit:hover {
+                    background: rgba(255,255,255,0.92);
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+                    transform: translateY(-1px);
+                }
+
+        .bottom {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12.5px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 8px;
+            align-items: center;
+        }
+
+        .bottom-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+            .bottom-left input[type="checkbox"] {
+                width: 14px;
+                height: 14px;
+                cursor: pointer;
+            }
+
+        .bottom-right a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+        }
+
+            .bottom-right a:hover {
+                color: #fff;
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="moon"></div>
+    <div class="stars" id="stars"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star2"></div>
+
+    <!-- Mountains background -->
+    <svg viewBox="0 0 1440 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"
+         style="position:fixed;bottom:0;left:0;width:100%;height:45%;z-index:2;pointer-events:none;">
+        <polygon points="0,400 180,200 320,280 460,160 600,250 720,130 860,220 1000,170 1140,240 1280,180 1440,220 1440,400" fill="#4a2040" opacity="0.6" />
+        <polygon points="0,400 100,280 250,320 400,240 550,300 680,200 820,270 960,210 1100,280 1250,230 1440,260 1440,400" fill="#2a1530" opacity="0.8" />
+    </svg>
+
+    <!-- Login Form -->
+    <div class="login-box">
+        <div class="login-container">
+
+            <div class="top-header">
+                <span>Property Management</span>
+                <header>Sign In</header>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-msg">⚠️ @ViewBag.Error</div>
+            }
+
+            @if (ViewBag.Error != null)
+            {
+                <div style="padding:10px;margin-bottom:15px;background:#f8d7da;color:#721c24;border-radius:5px;text-align:center;">
+                    @ViewBag.Error
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div style="padding:10px;margin-bottom:15px;background:#d4edda;color:#155724;border-radius:5px;text-align:center;">
+                    @TempData["Success"]
+                </div>
+            }
+            <form asp-action="Login" asp-controller="Account" method="post">
+                @Html.AntiForgeryToken()
+                <div class="input-field">
+                    <input name="username" type="text" class="input" placeholder="Email" required />
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-field">
+                    <input name="password" type="password" class="input" placeholder="Password" required />
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="input-field">
+                    <input type="submit" class="submit" value="Login" />
+                </div>
+            </form>
+
+
+            <div class="bottom">
+                <div class="bottom-left">
+                    <input type="checkbox" id="check">
+                    <label for="check">Remember me</label>
+                </div>
+                <div class="bottom-right">
+                    <a href="#">Forgot password?</a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div>
-        <label>Mật khẩu</label>
-        <input name="password" type="password" />
-    </div>
+    <!-- Mountains foreground -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none"
+         style="position:fixed;bottom:0;left:0;width:100%;height:38%;z-index:6;pointer-events:none;">
+        <path d="M300,320 L580,80 L720,140 L860,60 L1000,120 L1440,320 Z" fill="#141c2e" />
+        <path d="M0,320 L200,200 L350,260 L500,180 L620,240 L0,320 Z" fill="#141c2e" />
+        <path d="M1100,320 L1220,180 L1350,240 L1440,200 L1440,320 Z" fill="#141c2e" />
+        <rect x="0" y="280" width="1440" height="40" fill="#141c2e" />
+    </svg>
 
-    <br />
-    <button type="submit">Đăng nhập</button>
-</form>
+    <!-- Trees left -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"
+         style="position:fixed;bottom:80px;left:5%;z-index:7;width:280px;pointer-events:none;">
+        <polygon points="30,200 30,100 10,100 40,60 20,60 50,20 80,60 60,60 90,100 70,100 70,200" fill="#0e1525" />
+        <polygon points="80,200 80,110 65,110 90,75 72,75 100,40 128,75 110,75 135,110 120,110 120,200" fill="#0e1525" />
+        <polygon points="135,200 135,115 122,115 145,82 130,82 155,50 180,82 165,82 188,115 175,115 175,200" fill="#0e1525" />
+        <polygon points="185,200 185,120 173,120 195,88 182,88 205,57 228,88 215,88 237,120 225,120 225,200" fill="#0e1525" />
+        <polygon points="230,200 230,125 219,125 240,95 228,95 250,65 272,95 260,95 281,125 270,125 270,200" fill="#0e1525" />
+    </svg>
+
+    <!-- Wolf -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 80"
+         style="position:fixed;bottom:195px;left:calc(50% - 120px);z-index:8;width:90px;pointer-events:none;">
+        <path d="M60,75 Q55,60 50,55 Q42,50 38,45 Q35,38 40,32 Q38,25 42,20 Q46,15 50,18 Q53,12 58,14 Q62,10 66,14 Q71,12 73,18 Q78,15 80,22 Q83,30 78,36 Q82,42 78,48 Q72,54 68,58 Q65,63 63,75 Z" fill="#1a2a42" />
+        <path d="M63,45 Q70,35 75,28 Q79,22 76,18" stroke="#1a2a42" stroke-width="4" fill="none" stroke-linecap="round" />
+    </svg>
+
+    <!-- Trees right -->
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150"
+         style="position:fixed;bottom:65px;right:4%;z-index:7;width:180px;pointer-events:none;">
+        <polygon points="20,150 20,80 8,80 30,48 14,48 40,15 66,48 50,48 72,80 60,80 60,150" fill="#0e1525" />
+        <polygon points="70,150 70,88 60,88 80,58 66,58 90,28 114,58 100,58 120,88 110,88 110,150" fill="#0e1525" />
+        <polygon points="115,150 115,95 106,95 124,67 112,67 134,40 156,67 144,67 162,95 153,95 153,150" fill="#0e1525" />
+    </svg>
+
+    <script>
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 80; i++) {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            const size = Math.random() * 3 + 1;
+            star.style.cssText = `
+                width: ${size}px;
+                height: ${size}px;
+                top: ${Math.random() * 65}%;
+                left: ${Math.random() * 100}%;
+                --duration: ${2 + Math.random() * 4}s;
+                --delay: ${Math.random() * 4}s;
+                --min-op: ${0.2 + Math.random() * 0.4};
+            `;
+            starsContainer.appendChild(star);
+        }
+    </script>
+</body>
+</html>

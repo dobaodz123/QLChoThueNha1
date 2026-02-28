@@ -1,0 +1,17 @@
+﻿@model QlChoThueNha1.Models.HouseType
+
+<h2>Sửa loại nhà</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label>Tên loại</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label>Mô tả</label>
+        <input asp-for="Description" class="form-control" />
+    </div>  
+    <button type="submit" class="btn btn-primary">Cập nhật</button>
+</form>

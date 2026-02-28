@@ -19,30 +19,51 @@ namespace QlChoThueNha1.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Tenant")]
+        // ================= CREATE =================
         public IActionResult Create(int houseId)
         {
+            var house = _context.Houses.Find(houseId);
+
+            if (house == null)
+            {
+                TempData["Error"] = "Không tìm thấy nhà!";
+                return RedirectToAction("Index", "House");
+            }
+
             var request = new RentalRequest
             {
-                House = _context.Houses.Find(houseId)
+                House = house
             };
+
             return View(request);
         }
 
         [HttpPost]
         public IActionResult Create(RentalRequest request)
         {
-            request.Status = "Pending";
-            request.UserId = GetCurrentUserId();
+            try
+            {
+                request.Status = "Pending";
+                request.UserId = GetCurrentUserId();
 
-            _context.RentalRequests.Add(request);
-            _context.SaveChanges();
+                _context.RentalRequests.Add(request);
+                _context.SaveChanges();
 
-            return RedirectToAction("MyRequests");
+                TempData["Success"] = "Gửi yêu cầu thuê thành công!";
+
+                return RedirectToAction("MyRequests");
+            }
+            catch (Exception)
+            {
+                TempData["Error"] = "Gửi yêu cầu thuê thất bại!";
+                return View(request);
+            }
         }
-        public IActionResult GetMyRequests()
+
+        // ================= MY REQUESTS =================
+        public IActionResult MyRequests()
         {
-            int userId = GetCurrentUserId();
+            var userId = GetCurrentUserId();
 
             var requests = _context.RentalRequests
                 .Include(r => r.House)
@@ -52,30 +73,19 @@ namespace QlChoThueNha1.Controllers
             return View(requests);
         }
 
+        // ================= GET CURRENT USER =================
         private int GetCurrentUserId()
         {
-            var idClaim = User?.FindFirst("UserId") ?? User?.FindFirst(ClaimTypes.NameIdentifier);
+            var idClaim = User?.FindFirst("UserId")
+                          ?? User?.FindFirst(ClaimTypes.NameIdentifier);
+
             if (idClaim == null || !int.TryParse(idClaim.Value, out var userId))
             {
                 throw new InvalidOperationException("Authenticated user id not found in claims.");
             }
 
             return userId;
-        }
 
-        public IActionResult MyRequests
-        {
-            get
-            {
-                var userId = GetCurrentUserId();
-
-                var requests = _context.RentalRequests
-                    .Include(r => r.House)
-                    .Where(r => r.UserId == userId)
-                    .ToList();
-
-                return View(requests);
-            }
         }
     }
 }

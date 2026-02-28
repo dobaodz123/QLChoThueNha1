@@ -1,0 +1,18 @@
+﻿@model QlChoThueNha1.Models.HouseType
+
+<h2>Thêm loại nhà</h2>
+
+<form asp-action="Create" method="post">
+
+    <div class="form-group">
+        <label>Tên loại</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group mt-2">
+        <label>Mô tả</label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success mt-3">Lưu</button>
+</form>

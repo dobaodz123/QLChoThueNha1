@@ -51,6 +51,10 @@ namespace QlChoThueNha1.Controllers
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index");
+            TempData["Success"] = "Đăng nhập thành công!";
+            return RedirectToAction("Index", "Home");
+            TempData["Error"] = "Sai tài khoản hoặc mật khẩu!";
+            return View();
         }
     }
 }

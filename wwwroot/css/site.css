@@ -1,31 +1,54 @@
-html {
-  font-size: 14px;
+/* HERO SECTION */
+.hero-section {
+    height: 90vh;
+    background: linear-gradient( rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6) ), url('/images/house-bg.jpg') center/cover no-repeat;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    .hero-section h1 {
+        font-size: 3rem;
+        letter-spacing: 1px;
+    }
+
+    .hero-section .btn {
+        border-radius: 30px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .hero-section .btn:hover {
+            transform: scale(1.05);
+        }
+
+/* FOOTER */
+.footer-custom {
+    background: linear-gradient(135deg, #1f2937, #111827);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.footer-link {
+    color: #ccc;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+    .footer-link:hover {
+        color: #ffffff;
+        padding-left: 5px;
+    }
+.hero-section {
+    height: 90vh;
+    background: linear-gradient( rgba(0,0,0,0.6), rgba(0,0,0,0.6) ), url('/images/hero.jpg') center/cover no-repeat;
 }
 
-body {
-  margin-bottom: 60px;
-}
+    .hero-section h1 {
+        font-size: 3rem;
+    }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
+    .hero-section .btn {
+        border-radius: 30px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
+        .hero-section .btn:hover {
+            transform: scale(1.05);
+        }

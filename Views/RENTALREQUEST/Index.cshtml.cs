@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace QlChoThueNha1.Views.RentalRequest
 {
-    public class MyRequestsModel : PageModel
+    public class IndexModel : PageModel
     {
         public void OnGet()
         {

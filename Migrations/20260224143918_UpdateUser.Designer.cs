@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QlChoThueNha1.Data;
 
@@ -11,9 +12,11 @@ using QlChoThueNha1.Data;
 namespace QlChoThueNha1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260224143918_UpdateUser")]
+    partial class UpdateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,6 +258,10 @@ namespace QlChoThueNha1.Migrations
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
@@ -266,7 +273,8 @@ namespace QlChoThueNha1.Migrations
                             Email = "admin@gmail.com",
                             FullName = "Quản trị viên",
                             Password = "123456",
-                            Role = "Admin"
+                            Role = "Admin",
+                            Username = "admin"
                         },
                         new
                         {
@@ -274,7 +282,8 @@ namespace QlChoThueNha1.Migrations
                             Email = "customer1@gmail.com",
                             FullName = "Nguyễn Văn A",
                             Password = "123456",
-                            Role = "Customer"
+                            Role = "Customer",
+                            Username = "customer1"
                         },
                         new
                         {
@@ -282,7 +291,8 @@ namespace QlChoThueNha1.Migrations
                             Email = "customer2@gmail.com",
                             FullName = "Trần Thị B",
                             Password = "123456",
-                            Role = "Customer"
+                            Role = "Customer",
+                            Username = "customer2"
                         });
                 });
 

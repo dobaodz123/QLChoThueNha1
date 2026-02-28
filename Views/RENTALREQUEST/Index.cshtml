@@ -1,0 +1,40 @@
+﻿@model List<QlChoThueNha1.Models.RentalRequest>
+
+<h2>Danh sách yêu cầu thuê</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nhà</th>
+            <th>Trạng thái</th>
+            <th>Ngày yêu cầu</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.House?.Name</td>
+                <td>@item.Status</td>
+                <td>@item.RequestDate</td>
+                <td>
+                    @if (item.Status == "Pending")
+                    {
+                        <a asp-action="Approve" asp-route-id="@item.Id"
+                           class="btn btn-success btn-sm">Duyệt</a>
+
+                        <a asp-action="Reject" asp-route-id="@item.Id"
+                           class="btn btn-danger btn-sm">Từ chối</a>
+                    }
+                    else
+                    {
+                        <span>Đã xử lý</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

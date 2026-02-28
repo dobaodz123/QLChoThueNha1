@@ -63,9 +63,15 @@
                             </a>
                         </div>
                     }
+                    else if (Model.Status == "Rented")
+                    {
+                        <div class="alert alert-danger mt-4">
+                            <i class="fas fa-times-circle"></i> Nhà này đã được thuê, vui lòng chọn nhà khác.
+                        </div>
+                    }
                     else if (!User.Identity.IsAuthenticated)
                     {
-                        <div class="alert alert-info">
+                        <div class="alert alert-info mt-4">
                             Vui lòng <a asp-controller="Account" asp-action="Login">đăng nhập</a>
                             để gửi yêu cầu thuê nhà.
                         </div>
@@ -107,8 +113,8 @@
     </div>
 
     <div class="mt-4">
-        <a asp-controller="House" asp-action="Search" class="btn btn-outline-secondary">
-            <i class="fas fa-arrow-left"></i> Quay lại danh sách
+        <a asp-action="Index" class="btn btn-secondary">
+            Quay lại danh sách
         </a>
     </div>
 </div>

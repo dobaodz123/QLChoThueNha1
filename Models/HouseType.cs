@@ -1,10 +1,12 @@
-﻿using QlChoThueNha1.Models;
+﻿using System.Collections.Generic;
 
-public class HouseType
+namespace QlChoThueNha1.Models
 {
-    public int Id { get; set; }
-    public string Name { get; set; } // Phòng trọ, Căn hộ...
-
-    public ICollection<House> Houses { get; set; }
-    public string Description { get; internal set; }
+    public class HouseType
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public ICollection<House> Houses { get; set; } = new List<House>();
+    }
 }
