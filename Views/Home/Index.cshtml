@@ -1,14 +1,867 @@
-﻿<section class="hero-section d-flex align-items-center text-center text-white">
-    <div class="container">
-        <h1 class="display-4 fw-bold">
-            Thuê Nhà Nhanh Chóng & An Toàn
-        </h1>
-        <p class="lead mt-3">
-            Hàng trăm căn nhà đang chờ bạn.
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<style>
+    /* ===== HERO ===== */
+    .hero-section {
+        min-height: 100vh;
+        background: linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=80') center/cover no-repeat;
+        display: flex;
+        align-items: center;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(transparent, #f4f6fb);
+        }
+
+    .hero-title {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+        line-height: 1.15;
+        margin-bottom: 20px;
+    }
+
+        .hero-title span {
+            color: #4d9fff;
+        }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.85;
+        max-width: 500px;
+        margin: 0 auto 32px;
+        line-height: 1.7;
+    }
+
+    .btn-hero {
+        background: linear-gradient(135deg, #1a6cff, #4d9fff);
+        color: white;
+        border: none;
+        border-radius: 50px;
+        padding: 15px 36px;
+        font-size: 1rem;
+        font-weight: 700;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        box-shadow: 0 8px 30px rgba(26,108,255,0.4);
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-hero:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(26,108,255,0.5);
+            color: white;
+        }
+
+    .btn-hero-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 50px;
+        padding: 14px 32px;
+        font-size: 1rem;
+        font-weight: 600;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 12px;
+    }
+
+        .btn-hero-outline:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: white;
+            color: white;
+        }
+
+    /* Stats bar */
+    .stats-bar {
+        background: white;
+        border-radius: 20px;
+        padding: 28px 40px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0 20px;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1a6cff;
+        line-height: 1;
+        margin-bottom: 4px;
+    }
+
+    .stat-label {
+        font-size: 0.82rem;
+        color: #6b7280;
+        font-weight: 500;
+    }
+
+    .stat-divider {
+        width: 1px;
+        background: #e5e7eb;
+        height: 40px;
+        margin: auto;
+    }
+
+    /* ===== SECTIONS ===== */
+    .section-tag {
+        display: inline-block;
+        background: rgba(26,108,255,0.1);
+        color: #1a6cff;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 30px;
+        margin-bottom: 12px;
+    }
+
+    .section-title {
+        font-size: 1.9rem;
+        font-weight: 800;
+        color: #0d1117;
+        letter-spacing: -0.5px;
+        margin-bottom: 12px;
+    }
+
+    .section-sub {
+        color: #6b7280;
+        font-size: 0.95rem;
+        max-width: 480px;
+        margin: 0 auto;
+        line-height: 1.7;
+    }
+
+    /* ===== PROMO CARDS ===== */
+    .promo-card {
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        height: 220px;
+        display: flex;
+        align-items: flex-end;
+        padding: 24px;
+        color: white;
+        text-decoration: none;
+        transition: transform 0.3s;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+        .promo-card:hover {
+            transform: translateY(-5px);
+            color: white;
+        }
+
+    .promo-card-bg {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        transition: transform 0.5s;
+    }
+
+    .promo-card:hover .promo-card-bg {
+        transform: scale(1.06);
+    }
+
+    .promo-card-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(transparent 20%, rgba(0,0,0,0.75));
+    }
+
+    .promo-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: #ff6b35;
+        color: white;
+        font-size: 0.78rem;
+        font-weight: 800;
+        padding: 5px 12px;
+        border-radius: 30px;
+        letter-spacing: 0.3px;
+    }
+
+    .promo-content {
+        position: relative;
+        z-index: 2;
+    }
+
+        .promo-content h4 {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .promo-content p {
+            font-size: 0.82rem;
+            opacity: 0.85;
+            margin: 0;
+        }
+
+    /* ===== FEATURES ===== */
+    .feature-card {
+        background: white;
+        border-radius: 20px;
+        padding: 32px 28px;
+        text-align: center;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+        transition: all 0.3s;
+        height: 100%;
+        border: 1.5px solid transparent;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            border-color: rgba(26,108,255,0.15);
+        }
+
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 20px;
+    }
+
+    .feature-card h5 {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 10px;
+        color: #0d1117;
+    }
+
+    .feature-card p {
+        color: #6b7280;
+        font-size: 0.875rem;
+        line-height: 1.7;
+        margin: 0;
+    }
+
+    /* ===== HOW IT WORKS ===== */
+    .how-section {
+        background: linear-gradient(135deg, #0d1117, #1a2a4a);
+        border-radius: 28px;
+        padding: 60px 40px;
+        color: white;
+    }
+
+    .step-item {
+        text-align: center;
+        position: relative;
+    }
+
+    .step-num {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #1a6cff, #4d9fff);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: white;
+        margin: 0 auto 16px;
+        box-shadow: 0 6px 20px rgba(26,108,255,0.4);
+    }
+
+    .step-item h5 {
+        font-weight: 700;
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+    }
+
+    .step-item p {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.6;
+    }
+
+    .step-arrow {
+        position: absolute;
+        top: 28px;
+        right: -30px;
+        color: rgba(255,255,255,0.2);
+        font-size: 1.2rem;
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonial-card {
+        background: white;
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.07);
+        height: 100%;
+        transition: all 0.3s;
+    }
+
+        .testimonial-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+    .testimonial-stars {
+        color: #f59e0b;
+        font-size: 0.85rem;
+        margin-bottom: 14px;
+    }
+
+    .testimonial-text {
+        color: #374151;
+        font-size: 0.9rem;
+        line-height: 1.75;
+        margin-bottom: 20px;
+        font-style: italic;
+    }
+
+    .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .testimonial-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .testimonial-name {
+        font-weight: 700;
+        font-size: 0.875rem;
+        color: #0d1117;
+        margin-bottom: 2px;
+    }
+
+    .testimonial-role {
+        font-size: 0.78rem;
+        color: #9ca3af;
+    }
+
+    /* ===== SUPPORT ===== */
+    .support-section {
+        background: white;
+        border-radius: 24px;
+        padding: 50px 40px;
+        box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+    }
+
+    .support-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 20px;
+        border-radius: 16px;
+        transition: all 0.2s;
+        text-decoration: none;
+        color: inherit;
+        border: 1.5px solid #f3f4f6;
+    }
+
+        .support-card:hover {
+            background: #f8faff;
+            border-color: rgba(26,108,255,0.2);
+            color: inherit;
+        }
+
+    .support-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .support-card h6 {
+        font-weight: 700;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
+        color: #0d1117;
+    }
+
+    .support-card p {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* ===== CTA ===== */
+    .cta-section {
+        background: linear-gradient(135deg, #1a6cff, #0f4fd4);
+        border-radius: 28px;
+        padding: 60px 40px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .cta-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+            margin-bottom: 28px;
+        }
+
+    .btn-cta {
+        background: white;
+        color: #1a6cff;
+        border: none;
+        border-radius: 50px;
+        padding: 14px 32px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+
+        .btn-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            color: #1a6cff;
+        }
+
+    .btn-cta-outline {
+        background: transparent;
+        color: white;
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 50px;
+        padding: 13px 28px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        font-family: 'Be Vietnam Pro', sans-serif;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+        margin-left: 12px;
+    }
+
+        .btn-cta-outline:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: white;
+            color: white;
+        }
+
+    /* Animate on scroll */
+    .fade-up {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease;
+    }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+</style>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <div class="container position-relative" style="z-index:5;">
+        <div class="hero-title">
+            Thuê Nhà <span>Nhanh Chóng</span><br>& An Toàn
+        </div>
+        <p class="hero-subtitle">
+            Hàng trăm căn nhà chất lượng cao đang chờ bạn. Tìm kiếm, so sánh và đặt thuê chỉ trong vài phút.
         </p>
-        <a asp-controller="House" asp-action="Index"
-           class="btn btn-light btn-lg mt-4 px-4">
-            Khám phá ngay
-        </a>
+        <div>
+            <a asp-controller="House" asp-action="Index" class="btn-hero">
+                <i class="fas fa-search me-2"></i> Khám phá ngay
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn-hero-outline">
+                Đăng ký miễn phí
+            </a>
+        </div>
     </div>
 </section>
+
+<!-- ===== STATS BAR ===== -->
+<div class="container" style="margin-top: -50px; position:relative; z-index:10;">
+    <div class="stats-bar">
+        <div class="row align-items-center">
+            <div class="col stat-item">
+                <div class="stat-number">500+</div>
+                <div class="stat-label">Căn nhà</div>
+            </div>
+            <div class="col-auto stat-divider"></div>
+            <div class="col stat-item">
+                <div class="stat-number">1,200+</div>
+                <div class="stat-label">Khách hàng</div>
+            </div>
+            <div class="col-auto stat-divider"></div>
+            <div class="col stat-item">
+                <div class="stat-number">98%</div>
+                <div class="stat-label">Hài lòng</div>
+            </div>
+            <div class="col-auto stat-divider"></div>
+            <div class="col stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Hỗ trợ</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PROMO / GIẢM GIÁ ===== -->
+<div class="container mt-5 pt-3">
+    <div class="text-center mb-4 fade-up">
+        <div class="section-tag">🔥 Ưu đãi đặc biệt</div>
+        <div class="section-title">Nhà giảm giá hôm nay</div>
+        <p class="section-sub">Những căn nhà đang có ưu đãi tốt nhất, đừng bỏ lỡ!</p>
+    </div>
+    <div class="row g-3 fade-up">
+        <div class="col-md-6">
+            <a asp-controller="House" asp-action="Index" class="promo-card d-block">
+                <div class="promo-card-bg" style="background-image:url('https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80');"></div>
+                <div class="promo-card-overlay"></div>
+                <div class="promo-badge">GIẢM 20%</div>
+                <div class="promo-content">
+                    <h4>Căn hộ cao cấp Q.1</h4>
+                    <p>Từ 8,000,000đ/tháng — Còn 5 căn</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-controller="House" asp-action="Index" class="promo-card d-block">
+                <div class="promo-card-bg" style="background-image:url('https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80');"></div>
+                <div class="promo-card-overlay"></div>
+                <div class="promo-badge">GIẢM 15%</div>
+                <div class="promo-content">
+                    <h4>Phòng trọ SV</h4>
+                    <p>Từ 2,500,000đ/tháng</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-controller="House" asp-action="Index" class="promo-card d-block">
+                <div class="promo-card-bg" style="background-image:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80');"></div>
+                <div class="promo-card-overlay"></div>
+                <div class="promo-badge">MỚI</div>
+                <div class="promo-content">
+                    <h4>Biệt thự Q.7</h4>
+                    <p>Từ 25,000,000đ/tháng</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== FEATURES / GIỚI THIỆU ===== -->
+<div class="container mt-5 pt-3">
+    <div class="text-center mb-5 fade-up">
+        <div class="section-tag">✨ Tại sao chọn chúng tôi</div>
+        <div class="section-title">Nền tảng thuê nhà #1</div>
+        <p class="section-sub">Chúng tôi kết nối chủ nhà và người thuê một cách nhanh chóng, minh bạch và an toàn.</p>
+    </div>
+    <div class="row g-4 fade-up">
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(26,108,255,0.1); color:#1a6cff;">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h5>An toàn & Uy tín</h5>
+                <p>Tất cả nhà đăng đều được xác minh. Giao dịch minh bạch, rõ ràng.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(0,200,83,0.1); color:#00c853;">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h5>Nhanh chóng</h5>
+                <p>Tìm và đặt thuê nhà trong vài phút. Phản hồi từ chủ nhà trong 24h.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(255,107,53,0.1); color:#ff6b35;">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <h5>Giá tốt nhất</h5>
+                <p>So sánh hàng trăm căn nhà, tìm được mức giá phù hợp nhất với bạn.</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="feature-card">
+                <div class="feature-icon" style="background:rgba(139,92,246,0.1); color:#8b5cf6;">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h5>Hỗ trợ 24/7</h5>
+                <p>Đội ngũ hỗ trợ luôn sẵn sàng giải đáp mọi thắc mắc của bạn.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== HOW IT WORKS ===== -->
+<div class="container mt-5 pt-3">
+    <div class="how-section fade-up">
+        <div class="text-center mb-5">
+            <div class="section-tag" style="background:rgba(255,255,255,0.1); color:rgba(255,255,255,0.9);">Hướng dẫn</div>
+            <div class="section-title" style="color:white;">Thuê nhà chỉ 4 bước</div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-3 step-item">
+                <div class="step-num">1</div>
+                <h5>Tạo tài khoản</h5>
+                <p>Đăng ký miễn phí trong 1 phút với email của bạn.</p>
+                <div class="step-arrow d-none d-md-block"><i class="fas fa-chevron-right"></i></div>
+            </div>
+            <div class="col-md-3 step-item">
+                <div class="step-num">2</div>
+                <h5>Tìm kiếm nhà</h5>
+                <p>Lọc theo khu vực, giá, loại nhà phù hợp nhu cầu.</p>
+                <div class="step-arrow d-none d-md-block"><i class="fas fa-chevron-right"></i></div>
+            </div>
+            <div class="col-md-3 step-item">
+                <div class="step-num">3</div>
+                <h5>Gửi yêu cầu</h5>
+                <p>Chọn nhà ưng ý và gửi yêu cầu thuê cho chủ nhà.</p>
+                <div class="step-arrow d-none d-md-block"><i class="fas fa-chevron-right"></i></div>
+            </div>
+            <div class="col-md-3 step-item">
+                <div class="step-num">4</div>
+                <h5>Dọn vào ở!</h5>
+                <p>Sau khi được duyệt, ký hợp đồng và dọn vào ngay.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== TESTIMONIALS ===== -->
+<div class="container mt-5 pt-3">
+    <div class="text-center mb-5 fade-up">
+        <div class="section-tag">💬 Đánh giá</div>
+        <div class="section-title">Khách hàng nói gì?</div>
+        <p class="section-sub">Hàng nghìn người đã tìm được nhà ưng ý qua nền tảng của chúng tôi.</p>
+    </div>
+    <div class="row g-4 fade-up">
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Tôi năm nay đã ngoài 70 nhưng chưa gặp trọ nào tốt vậy sạch sẽ giá rẻ chủ trọ là tấm gương sáng để tôi noi theo "</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg,#1a6cff,#4d9fff);">NT</div>
+                    <div>
+                        <div class="testimonial-name">Em Huy Vũ </div>
+                        <div class="testimonial-role">Bảo Vệ Thu Vé Xe </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Anh chủ rất đẹp trai và thân thiện em sắp rụng trứng rồi hihi "</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg,#00c853,#00a846);">TL</div>
+                    <div>
+                        <div class="testimonial-name">Trần Hà Linh  </div>
+                        <div class="testimonial-role">TikToker </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <p class="testimonial-text">"Tôi là wibu nhưng rất thích trọ mọi người lên thử một lần "</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar" style="background:linear-gradient(135deg,#ff6b35,#ff4500);">PH</div>
+                    <div>
+                        <div class="testimonial-name">Em Mingg  </div>
+                        <div class="testimonial-role">Lao Công Trường Đại Nam   </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SUPPORT ===== -->
+<div class="container mt-5 pt-3">
+    <div class="support-section fade-up">
+        <div class="row align-items-center">
+            <div class="col-md-5 mb-4 mb-md-0">
+                <div class="section-tag">🎯 Hỗ trợ</div>
+                <div class="section-title" style="text-align:left;">Chúng tôi luôn<br>sẵn sàng giúp bạn</div>
+                <p style="color:#6b7280; font-size:0.9rem; line-height:1.75; margin-top:12px;">
+                    Đội ngũ hỗ trợ chuyên nghiệp 24/7, sẵn sàng giải đáp mọi thắc mắc của bạn qua nhiều kênh khác nhau.
+                </p>
+            </div>
+            <div class="col-md-7">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <a href="tel:0123456789" class="support-card">
+                            <div class="support-icon" style="background:rgba(26,108,255,0.1); color:#1a6cff;">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h6>Gọi điện</h6>
+                                <p>0123-456-789<br>Thứ 2 – CN, 8h–22h</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="mailto:contact@thuenha247.vn" class="support-card">
+                            <div class="support-icon" style="background:rgba(0,200,83,0.1); color:#00c853;">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h6>Email</h6>
+                                <p>contact@thuenha247.vn<br>Phản hồi trong 2h</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" class="support-card">
+                            <div class="support-icon" style="background:rgba(255,107,53,0.1); color:#ff6b35;">
+                                <i class="fab fa-facebook-messenger"></i>
+                            </div>
+                            <div>
+                                <h6>Messenger</h6>
+                                <p>Chat trực tiếp<br>Phản hồi ngay lập tức</p>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="col-6">
+                        <a href="#" class="support-card">
+                            <div class="support-icon" style="background:rgba(139,92,246,0.1); color:#8b5cf6;">
+                                <i class="fas fa-comments"></i>
+                            </div>
+                            <div>
+                                <h6>Live Chat</h6>
+                                <p>Hỗ trợ trực tuyến<br>24/7 không nghỉ</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="container mt-5 mb-5 pb-3">
+    <div class="cta-section fade-up">
+        <div style="position:relative; z-index:5;">
+            <h2>Sẵn sàng tìm nhà mơ ước?</h2>
+            <p>Đăng ký miễn phí ngay hôm nay và khám phá hàng trăm căn nhà tuyệt vời.</p>
+            <a asp-controller="Account" asp-action="Register" class="btn-cta">
+                <i class="fas fa-user-plus me-2"></i> Đăng ký miễn phí
+            </a>
+            <a asp-controller="House" asp-action="Index" class="btn-cta-outline">
+                Xem danh sách nhà
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Animate on scroll
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // Count up animation
+    const counters = document.querySelectorAll('.stat-number');
+    counters.forEach(counter => {
+        const target = counter.innerText;
+        const num = parseInt(target.replace(/\D/g, ''));
+        const suffix = target.replace(/[0-9]/g, '');
+        let count = 0;
+        const step = Math.ceil(num / 60);
+        const timer = setInterval(() => {
+            count += step;
+            if (count >= num) {
+                count = num;
+                clearInterval(timer);
+            }
+            counter.innerText = count.toLocaleString('vi-VN') + suffix;
+        }, 25);
+    });
+</script>
