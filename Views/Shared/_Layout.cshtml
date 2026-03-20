@@ -19,6 +19,7 @@
             --text: #1a1a2e;
             --text-muted: #6b7280;
             --border: rgba(0,0,0,0.08);
+            --bg: #f4f6fb;
         }
 
         * {
@@ -27,9 +28,118 @@
 
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
-            background: #f4f6fb;
+            background: var(--bg);
             color: var(--text);
+            transition: background 0.3s, color 0.3s;
         }
+
+            /* ===== DARK MODE ===== */
+            body.dark-mode {
+                --bg: #0d1117;
+                --text: #e6edf3;
+                --text-muted: #8b949e;
+                --surface: #161b22;
+                --border: rgba(255,255,255,0.08);
+                background: #0d1117 !important;
+                color: #e6edf3 !important;
+            }
+
+                body.dark-mode .navbar {
+                    background: rgba(22,27,34,0.95) !important;
+                    border-bottom: 1px solid #30363d !important;
+                }
+
+                body.dark-mode .nav-link {
+                    color: #8b949e !important;
+                }
+
+                    body.dark-mode .nav-link:hover {
+                        color: #e6edf3 !important;
+                        background: rgba(255,255,255,0.06) !important;
+                    }
+
+                body.dark-mode .navbar-brand {
+                    color: var(--primary) !important;
+                }
+
+                body.dark-mode .card {
+                    background: #161b22 !important;
+                    color: #e6edf3 !important;
+                    box-shadow: 0 2px 16px rgba(0,0,0,0.3) !important;
+                }
+
+                    body.dark-mode .card-body,
+                    body.dark-mode .card p,
+                    body.dark-mode .card h1,
+                    body.dark-mode .card h2,
+                    body.dark-mode .card h3,
+                    body.dark-mode .card h4,
+                    body.dark-mode .card h5 {
+                        color: #e6edf3 !important;
+                    }
+
+                body.dark-mode footer {
+                    background: #010409 !important;
+                }
+
+                body.dark-mode .dropdown-menu {
+                    background: #161b22 !important;
+                    border: 1px solid #30363d !important;
+                }
+
+                body.dark-mode .dropdown-item {
+                    color: #8b949e !important;
+                }
+
+                    body.dark-mode .dropdown-item:hover {
+                        background: #21262d !important;
+                        color: #e6edf3 !important;
+                    }
+
+                body.dark-mode .user-chip {
+                    background: rgba(255,255,255,0.06) !important;
+                    border-color: rgba(255,255,255,0.1) !important;
+                }
+
+                body.dark-mode .toast {
+                    background: #161b22 !important;
+                }
+
+                body.dark-mode main {
+                    background: #0d1117;
+                }
+
+        /* Nút dark mode */
+        .theme-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0,0,0,0.1);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+            .theme-btn:hover {
+                background: rgba(26,108,255,0.08);
+                border-color: var(--primary);
+                color: var(--primary);
+            }
+
+        body.dark-mode .theme-btn {
+            border-color: rgba(255,255,255,0.15);
+            color: #8b949e;
+        }
+
+            body.dark-mode .theme-btn:hover {
+                background: rgba(255,255,255,0.08);
+                color: #e6edf3;
+            }
 
         /* ===== NAVBAR ===== */
         .navbar {
@@ -85,16 +195,10 @@
                 background: rgba(26,108,255,0.08);
             }
 
-            .nav-link.active {
-                color: var(--primary) !important;
-                background: rgba(26,108,255,0.1);
-            }
-
             .nav-link i {
                 font-size: 13px;
             }
 
-        /* Dropdown */
         .dropdown-menu {
             border: none;
             border-radius: 14px;
@@ -126,11 +230,6 @@
                 color: #ff3b3b !important;
             }
 
-        .dropdown-divider {
-            margin: 6px 0;
-        }
-
-        /* Admin badge */
         .admin-link {
             color: #ff3b3b !important;
         }
@@ -140,7 +239,6 @@
                 color: #ff3b3b !important;
             }
 
-        /* Auth buttons */
         .btn-nav-login {
             color: var(--primary) !important;
             font-weight: 600;
@@ -150,11 +248,6 @@
             border: 1.5px solid rgba(26,108,255,0.3);
             transition: all 0.2s;
         }
-
-            .btn-nav-login:hover {
-                background: rgba(26,108,255,0.08);
-                border-color: var(--primary);
-            }
 
         .btn-nav-register {
             background: linear-gradient(135deg, var(--primary), #4d9fff);
@@ -168,12 +261,6 @@
             transition: all 0.2s;
         }
 
-            .btn-nav-register:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 6px 20px rgba(26,108,255,0.4);
-            }
-
-        /* User avatar chip */
         .user-chip {
             display: flex;
             align-items: center;
@@ -184,10 +271,6 @@
             border: 1.5px solid rgba(26,108,255,0.15);
             transition: all 0.2s;
         }
-
-            .user-chip:hover {
-                background: rgba(26,108,255,0.12);
-            }
 
         .user-avatar {
             width: 28px;
@@ -215,7 +298,6 @@
             min-width: 280px;
         }
 
-        /* ===== MAIN ===== */
         main {
             min-height: calc(100vh - 200px);
         }
@@ -296,7 +378,6 @@
                     color: white;
                 }
 
-        /* Cards global */
         .card {
             border: none;
             border-radius: 16px;
@@ -365,7 +446,16 @@
                                 <i class="fas fa-search"></i> Tìm nhà
                             </a>
                         </li>
-
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="PriceChart">
+                                <i class="fas fa-chart-line"></i> Biểu đồ giá
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="Support">
+                                <i class="fas fa-headset"></i> Hỗ trợ
+                            </a>
+                        </li>
 
                         @if (User.IsInRole("Admin"))
                         {
@@ -396,6 +486,14 @@
                     </ul>
 
                     <ul class="navbar-nav ms-auto align-items-center gap-2">
+
+                        <!-- NÚT SÁNG/TỐI -->
+                        <li class="nav-item">
+                            <button class="theme-btn" id="themeToggle" title="Chuyển chế độ sáng/tối">
+                                <i class="fas fa-moon" id="themeIcon"></i>
+                            </button>
+                        </li>
+
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item dropdown">
@@ -491,9 +589,9 @@
                 <div class="col-md-4">
                     <h5>Liên hệ</h5>
                     <p style="font-size:0.875rem; line-height:2;">
-                        <i class="fas fa-phone me-2" style="color:var(--primary);"></i> 0123-456-789<br>
-                        <i class="fas fa-envelope me-2" style="color:var(--primary);"></i> contact@thuenha247.vn<br>
-                        <i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i> TP. Hồ Chí Minh
+                        <i class="fas fa-phone me-2" style="color:var(--primary);"></i>0354550408<br>
+                        <i class="fas fa-envelope me-2" style="color:var(--primary);"></i>dongbao0606@gmail.com<br>
+                        <i class="fas fa-map-marker-alt me-2" style="color:var(--primary);"></i>Hà Nội, Việt Nam
                     </p>
                 </div>
             </div>
@@ -506,17 +604,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Toast auto hide
         setTimeout(function () {
             document.querySelectorAll('.toast').forEach(t => t.classList.remove('show'));
         }, 4000);
 
         // Navbar scroll effect
-        window.addEventListener('scroll', function() {
+        window.addEventListener('scroll', function () {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 20) {
                 navbar.style.boxShadow = '0 4px 30px rgba(0,0,0,0.1)';
             } else {
                 navbar.style.boxShadow = '0 2px 20px rgba(0,0,0,0.06)';
+            }
+        });
+
+        // Dark mode
+        const toggle = document.getElementById('themeToggle');
+        const icon = document.getElementById('themeIcon');
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            icon.className = 'fas fa-sun';
+        }
+
+        toggle.addEventListener('click', function () {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
             }
         });
     </script>

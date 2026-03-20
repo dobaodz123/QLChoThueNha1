@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "Biểu đồ giá thuê nhà";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-1 fw-bold">📊 Biểu đồ giá thuê nhà</h2>
+    <p class="text-muted mb-4">Thống kê giá thuê trung bình theo loại nhà</p>
+
+    <div class="card p-4 mb-4">
+        <canvas id="priceChart" height="100"></canvas>
+    </div>
+
+    <div class="row" id="statsCards"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const raw = @Html.Raw(ViewBag.ChartData);
+
+        const labels = raw.map(d => d.Type);
+        const avgPrices = raw.map(d => d.AvgPrice);
+        const minPrices = raw.map(d => d.MinPrice);
+        const maxPrices = raw.map(d => d.MaxPrice);
+
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Giá trung bình',
+                        data: avgPrices,
+                        backgroundColor: 'rgba(26,108,255,0.7)',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Giá thấp nhất',
+                        data: minPrices,
+                        backgroundColor: 'rgba(40,199,111,0.7)',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Giá cao nhất',
+                        data: maxPrices,
+                        backgroundColor: 'rgba(255,107,53,0.7)',
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ctx.dataset.label + ': ' +
+                                ctx.raw.toLocaleString('vi-VN') + ' đ'
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        ticks: {
+                            callback: val => val.toLocaleString('vi-VN') + ' đ'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Stats cards
+        const container = document.getElementById('statsCards');
+        raw.forEach(d => {
+            container.innerHTML += `
+                <div class="col-md-3 mb-3">
+                    <div class="card p-3 text-center">
+                        <h6 class="fw-bold text-primary">${d.Type}</h6>
+                        <p class="mb-1 small text-muted">Số lượng: <strong>${d.Count} căn</strong></p>
+                        <p class="mb-1 small text-muted">TB: <strong>${d.AvgPrice.toLocaleString('vi-VN')}đ</strong></p>
+                        <p class="mb-0 small text-muted">${d.MinPrice.toLocaleString('vi-VN')}đ - ${d.MaxPrice.toLocaleString('vi-VN')}đ</p>
+                    </div>
+                </div>`;
+        });
+    </script>
+}

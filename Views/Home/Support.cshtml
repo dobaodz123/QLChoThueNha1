@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Hỗ trợ";
+}
+
+<div class="container mt-5" style="max-width:800px">
+    <h2 class="fw-bold mb-1">🎧 Trung tâm hỗ trợ</h2>
+    <p class="text-muted mb-5">Chúng tôi luôn sẵn sàng giúp đỡ bạn</p>
+
+    <!-- Liên hệ -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div class="mb-3">
+                    <i class="fas fa-phone fa-2x text-primary"></i>
+                </div>
+                <h6 class="fw-bold">Hotline</h6>
+                <p class="text-muted mb-0">0354550408</p>
+                <small class="text-muted">8:00 - 22:00 hàng ngày</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div class="mb-3">
+                    <i class="fas fa-envelope fa-2x text-primary"></i>
+                </div>
+                <h6 class="fw-bold">Email</h6>
+                <p class="text-muted mb-0">dongbao0606@gmail.com</p>
+                <small class="text-muted">Phản hồi trong 24h</small>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center h-100">
+                <div class="mb-3">
+                    <i class="fab fa-facebook fa-2x text-primary"></i>
+                </div>
+                <h6 class="fw-bold">Facebook</h6>
+                <a href="https://www.facebook.com/Dobao.06" target="_blank" class="text-muted">Nhắn tin Facebook tôi </a><br>
+                <small class="text-muted">Phản hồi nhanh nhất</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ -->
+    <h4 class="fw-bold mb-3">❓ Câu hỏi thường gặp</h4>
+    <div class="accordion" id="faqAccordion">
+        <div class="accordion-item border-0 card mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button fw-500" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    Làm thế nào để thuê nhà?
+                </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-muted">
+                    Đăng ký tài khoản → Tìm nhà phù hợp → Nhấn "Gửi yêu cầu thuê" → Chờ Admin duyệt → Liên hệ chủ nhà.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item border-0 card mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed fw-500" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Mất bao lâu để được duyệt yêu cầu?
+                </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-muted">
+                    Thông thường trong vòng 24-48 giờ làm việc. Bạn sẽ thấy trạng thái cập nhật trong mục "Yêu cầu của tôi".
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item border-0 card mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed fw-500" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                    Tôi có thể hủy yêu cầu thuê không?
+                </button>
+            </h2>
+            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-muted">
+                    Có thể hủy khi yêu cầu còn ở trạng thái "Chờ duyệt". Vào mục "Yêu cầu của tôi" để hủy.
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item border-0 card mb-2">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed fw-500" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                    Dịch vụ có miễn phí không?
+                </button>
+            </h2>
+            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body text-muted">
+                    Hoàn toàn miễn phí cho người thuê. Chúng tôi không thu bất kỳ phí môi giới nào.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
