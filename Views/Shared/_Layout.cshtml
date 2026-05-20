@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     <style>
         :root {
@@ -486,7 +487,6 @@
                     </ul>
 
                     <ul class="navbar-nav ms-auto align-items-center gap-2">
-
                         <!-- NÚT SÁNG/TỐI -->
                         <li class="nav-item">
                             <button class="theme-btn" id="themeToggle" title="Chuyển chế độ sáng/tối">
@@ -545,7 +545,6 @@
                 </div>
             </div>
         </nav>
-        <link rel="stylesheet" href="~/css/site.css" />
     </header>
 
     <!-- BODY -->
@@ -602,14 +601,43 @@
         </div>
     </footer>
 
+    <!-- WIDGET CHAT AI -->
+    <div class="custom-chat-widget">
+        <!-- Khung chat chính -->
+        <div class="chat-window hidden" id="chatWindow">
+            <!-- Khu vực hiển thị tin nhắn -->
+            <div class="chat-messages" id="chatMessages">
+                <!-- Tin nhắn sẽ được JavaScript đẩy vào đây -->
+            </div>
+
+            <!-- Khu vực nhập tin nhắn -->
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" placeholder="Bạn cần tìm nhà ở khu vực nào?..." class="chat-input" />
+                <button id="sendBtn" class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Nút bật/tắt (Floating Button) -->
+        <button class="chat-toggle-btn" id="chatToggleBtn">
+            <i class="fas fa-comment"></i>
+        </button>
+    </div>
+
+    <!-- CÁC THƯ VIỆN SCRIPT CƠ BẢN -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- SCRIPT CHUNG CHO LAYOUT (Toast, DarkMode, Navbar) -->
     <script>
-        // Toast auto hide
+        // 1. Toast auto hide
         setTimeout(function () {
             document.querySelectorAll('.toast').forEach(t => t.classList.remove('show'));
         }, 4000);
 
-        // Navbar scroll effect
+        // 2. Navbar scroll effect
         window.addEventListener('scroll', function () {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 20) {
@@ -619,7 +647,7 @@
             }
         });
 
-        // Dark mode
+        // 3. Dark mode
         const toggle = document.getElementById('themeToggle');
         const icon = document.getElementById('themeIcon');
 
@@ -637,6 +665,86 @@
                 icon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             }
+        });
+    </script>
+
+    <!-- SCRIPT XỬ LÝ CHAT AI -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatWindow = document.getElementById('chatWindow');
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const chatToggleBtn = document.getElementById('chatToggleBtn');
+
+            // Hàm tự động thêm tin nhắn chào mừng
+            function addWelcomeMessage() {
+                if (chatMessages.children.length === 0) {
+                    const welcomeMsg = `Chào mừng bạn đến với Thuê Nhà 24/7. Tôi có thể giúp gì cho bạn trong việc tìm kiếm tổ ấm mới?`;
+                    chatMessages.innerHTML += `<div class="message ai-message">${welcomeMsg}</div>`;
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }
+            }
+
+            // Logic bật/tắt khung chat
+            chatToggleBtn.addEventListener('click', function () {
+                chatWindow.classList.toggle('hidden');
+                if (!chatWindow.classList.contains('hidden')) {
+                    addWelcomeMessage();
+                    chatToggleBtn.innerHTML = '<i class="fas fa-times"></i>'; // Đổi icon thành X
+                } else {
+                    chatToggleBtn.innerHTML = '<i class="fas fa-comment"></i>'; // Đổi lại icon Chat
+                }
+            });
+
+            // Logic gửi tin nhắn (Kết nối API cũ của bạn)
+
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            chatMessages.innerHTML += `<div class="message user-message">${text}</div>`;
+            chatInput.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const response = await fetch('/api/chat/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    // ĐÂY LÀ CHỖ QUYẾT ĐỊNH: Gửi đầy đủ các trường viết hoa chữ cái đầu để C# không bắt bẻ nữa
+                    body: JSON.stringify({
+                        NewMessage: text,
+                        Message: text,
+                        History: []
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    chatMessages.innerHTML += `<div class="message ai-message">${data.text}</div>`;
+                } else {
+                    const errorText = await response.text();
+                    chatMessages.innerHTML += `<div class="message ai-message" style="color: #ff6b35;">
+                        <b>Lỗi ${response.status}:</b> ${errorText}
+                    </div>`;
+                }
+            } catch (error) {
+                chatMessages.innerHTML += `<div class="message ai-message" style="color: #ff6b35;">Lỗi Exception: ${error.message}</div>`;
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+            // Bắt sự kiện click nút Gửi
+            sendBtn.addEventListener('click', sendMessage);
+
+            // Bắt sự kiện bấm phím Enter trong ô nhập
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
         });
     </script>
 

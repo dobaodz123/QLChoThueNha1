@@ -1,30 +1,49 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿// 👉 File: AccountController.cs
+// 🎯 Mục đích: Xử lý toàn bộ chức năng tài khoản (Login, Logout, Register)
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QlChoThueNha1.Data;
 using QlChoThueNha1.Models;
 using System.Security.Claims;
-
 namespace QlChoThueNha1.Controllers
 {
+    // ================= CLASS =================
+    // 🎯 Mục đích: Điều khiển logic tài khoản
+    // ⚙ Chức năng: Nhận request và xử lý
     public class AccountController : Controller
     {
+        // ================= FIELD =================
+        // 🎯 Mục đích: Kết nối database
+        // ⚙ Chức năng: Truy vấn bảng Users
         private readonly AppDbContext _context;
+
+        // ================= CONSTRUCTOR =================
+        // 🎯 Mục đích: Nhận DbContext từ hệ thống
+        // ⚙ Chức năng: Gán vào biến _context
         public AccountController(AppDbContext context)
         {
             _context = context;
         }
-
-        // ================= LOGIN =================
+       
+        // ================= FUNCTION: LOGIN (GET) =================
+        // 🎯 Mục đích: Hiển thị trang đăng nhập
+        // ⚙ Chức năng: Điều hướng người dùng
         [HttpGet]
         public IActionResult Login()
         {
+           
             if (User.Identity.IsAuthenticated)
                 return RedirectToAction("Index", "Home");
+
             return View();
         }
 
+        // ================= FUNCTION: LOGIN (POST) =================
+        // 🎯 Mục đích: Xử lý đăng nhập
+        // ⚙ Chức năng: Kiểm tra + xác thực + tạo session
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
@@ -34,15 +53,19 @@ namespace QlChoThueNha1.Controllers
                 return View();
             }
 
+            // 🎯 Tìm user trong database
+            // ⚙ Chức năng: So khớp email + password
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Email == username && u.Password == password);
 
+         
             if (user == null)
             {
                 TempData["Error"] = "Sai tài khoản hoặc mật khẩu!";
                 return View();
             }
 
+            
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email),
@@ -50,58 +73,63 @@ namespace QlChoThueNha1.Controllers
                 new Claim("FullName", user.FullName ?? user.Email)
             };
 
+    
             var identity = new ClaimsIdentity(
                 claims,
                 CookieAuthenticationDefaults.AuthenticationScheme);
 
+       
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(identity));
 
-            TempData["Success"] = $"Đăng nhập thành công! Chào mừng {user.FullName ?? user.Email}";
-
+            
             if (user.Role == "Admin")
                 return RedirectToAction("Index", "Admin");
+
             return RedirectToAction("Index", "Home");
         }
 
-        // ================= LOGOUT =================
+        // ================= FUNCTION: LOGOUT =================
+        // 🎯 Mục đích: Đăng xuất người dùng
+        // ⚙ Chức năng: Xóa session / cookie
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["Success"] = "Đăng xuất thành công!";
             return RedirectToAction("Login", "Account");
         }
 
-        // ================= REGISTER =================
+        // ================= FUNCTION: REGISTER (GET) =================
+        // 🎯 Mục đích: Hiển thị form đăng ký
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        // ================= FUNCTION: REGISTER (POST) =================
+        // 🎯 Mục đích: Tạo tài khoản mới
+        // ⚙ Chức năng: Validate + lưu DB
         [HttpPost]
         public IActionResult Register(User model)
         {
             if (!ModelState.IsValid)
             {
-                TempData["Error"] = "Vui lòng kiểm tra lại thông tin đăng ký!";
                 return View(model);
             }
 
             if (_context.Users.Any(u => u.Email == model.Email))
             {
-                TempData["Error"] = "Email đã tồn tại, vui lòng dùng email khác!";
                 return View(model);
             }
 
             model.CreatedAt = DateTime.Now;
             model.Role = "Customer";
+
             _context.Users.Add(model);
             _context.SaveChanges();
 
-            TempData["Success"] = "Đăng ký thành công! Vui lòng đăng nhập.";
             return RedirectToAction("Login");
         }
     }
