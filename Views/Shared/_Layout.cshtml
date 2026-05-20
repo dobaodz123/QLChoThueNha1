@@ -603,25 +603,34 @@
 
     <!-- WIDGET CHAT AI -->
     <div class="custom-chat-widget">
-        <!-- Khung chat chính -->
         <div class="chat-window hidden" id="chatWindow">
-            <!-- Khu vực hiển thị tin nhắn -->
-            <div class="chat-messages" id="chatMessages">
-                <!-- Tin nhắn sẽ được JavaScript đẩy vào đây -->
+            <!-- Header -->
+            <div class="chat-header">
+                <div class="chat-header-avatar">🏠</div>
+                <div class="chat-header-info">
+                    <div class="chat-header-name">AI Tư Vấn Thuê Nhà</div>
+                    <div class="chat-header-status">
+                        <span class="status-dot"></span> Đang hoạt động
+                    </div>
+                </div>
             </div>
 
-            <!-- Khu vực nhập tin nhắn -->
+            <!-- Messages -->
+            <div class="chat-messages" id="chatMessages"></div>
+
+            <!-- Input -->
             <div class="chat-input-area">
-                <input type="text" id="chatInput" placeholder="Bạn cần tìm nhà ở khu vực nào?..." class="chat-input" />
+                <input type="text" id="chatInput"
+                       placeholder="Nhập câu hỏi của bạn..."
+                       class="chat-input" />
                 <button id="sendBtn" class="send-btn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
 
-        <!-- Nút bật/tắt (Floating Button) -->
         <button class="chat-toggle-btn" id="chatToggleBtn">
-            <i class="fas fa-comment"></i>
+            <i class="fas fa-comment-dots"></i>
         </button>
     </div>
 
@@ -700,7 +709,7 @@
             // Logic gửi tin nhắn (Kết nối API cũ của bạn)
 
 
-        async function sendMessage() {
+                async function sendMessage() {
             const text = chatInput.value.trim();
             if (!text) return;
 
@@ -708,29 +717,35 @@
             chatInput.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
 
+            // Hiện typing indicator
+            const typingId = 'typing_' + Date.now();
+            chatMessages.innerHTML += `
+                <div class="typing-indicator" id="${typingId}">
+                    <span></span><span></span><span></span>
+                </div>`;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
             try {
                 const response = await fetch('/api/chat/send', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    // ĐÂY LÀ CHỖ QUYẾT ĐỊNH: Gửi đầy đủ các trường viết hoa chữ cái đầu để C# không bắt bẻ nữa
-                    body: JSON.stringify({
-                        NewMessage: text,
-                        Message: text,
-                        History: []
-                    })
+                    body: JSON.stringify({ NewMessage: text, Message: text, History: [] })
                 });
+
+                document.getElementById(typingId)?.remove();
 
                 if (response.ok) {
                     const data = await response.json();
                     chatMessages.innerHTML += `<div class="message ai-message">${data.text}</div>`;
                 } else {
                     const errorText = await response.text();
-                    chatMessages.innerHTML += `<div class="message ai-message" style="color: #ff6b35;">
+                    chatMessages.innerHTML += `<div class="message ai-message" style="color:#ff6b35;">
                         <b>Lỗi ${response.status}:</b> ${errorText}
                     </div>`;
                 }
             } catch (error) {
-                chatMessages.innerHTML += `<div class="message ai-message" style="color: #ff6b35;">Lỗi Exception: ${error.message}</div>`;
+                document.getElementById(typingId)?.remove();
+                chatMessages.innerHTML += `<div class="message ai-message" style="color:#ff6b35;">Lỗi: ${error.message}</div>`;
             }
 
             chatMessages.scrollTop = chatMessages.scrollHeight;

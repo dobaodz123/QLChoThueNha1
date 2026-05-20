@@ -29,63 +29,34 @@ namespace QlChoThueNha1.Controllers
             var apiKey = _config["Gemini:ApiKey"];
 
             if (string.IsNullOrEmpty(apiKey))
-            {
                 return BadRequest("Chưa cấu hình API Key.");
-            }
 
-            var client = _httpClientFactory.CreateClient();
-
-            // OPENROUTER URL
-            var url = "https://openrouter.ai/api/v1/chat/completions";
-
-            // HEADER AUTH
-            client.DefaultRequestHeaders.Clear();
-
-            client.DefaultRequestHeaders.Add(
-                "Authorization",
-                $"Bearer {apiKey}");
-
-            client.DefaultRequestHeaders.Add(
-                "HTTP-Referer",
-                "http://localhost:5000");
-
-            client.DefaultRequestHeaders.Add(
-                "X-Title",
-                "House Rental AI");
-
-            // MESSAGE
             var newMessage =
                 request.Message
                 ?? (request.NewMessage as string)
                 ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(newMessage))
-            {
                 return BadRequest("Tin nhắn không được để trống.");
-            }
 
-            // PAYLOAD OPENROUTER
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+            client.DefaultRequestHeaders.Add("HTTP-Referer", "http://localhost:5000");
+            client.DefaultRequestHeaders.Add("X-Title", "House Rental AI");
+
+            var url = "https://openrouter.ai/api/v1/chat/completions";
+
             var payload = new
             {
-                model = "mistralai/mistral-7b-instruct:free",
-
+                model = "openai/gpt-oss-120b:free",
                 messages = new object[]
                 {
                     new
                     {
                         role = "system",
-                        content = @"
-Bạn là AI hỗ trợ website thuê nhà.
-
-Nhiệm vụ:
-- Tư vấn thuê nhà
-- Gợi ý giá phù hợp
-- Gợi ý khu vực
-- Hỗ trợ khách thuê
-- Trả lời ngắn gọn bằng tiếng Việt
-"
+                        content = "Bạn là AI hỗ trợ website cho thuê nhà. Trả lời ngắn gọn bằng tiếng Việt."
                     },
-
                     new
                     {
                         role = "user",
@@ -98,17 +69,12 @@ Nhiệm vụ:
 
             var response = await client.PostAsync(
                 url,
-                new StringContent(
-                    json,
-                    Encoding.UTF8,
-                    "application/json"));
+                new StringContent(json, Encoding.UTF8, "application/json"));
 
             var result = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
-            {
                 return StatusCode((int)response.StatusCode, $"Lỗi {(int)response.StatusCode}: {result}");
-            }
 
             using var doc = JsonDocument.Parse(result);
 
