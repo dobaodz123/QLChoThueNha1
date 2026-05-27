@@ -1,0 +1,246 @@
+﻿@model List<QlChoThueNha1.Models.ThanhToan>
+
+<div class="container mt-5">
+
+    <h1 class="text-center text-success fw-bold mb-4">
+        💳 Thanh Toán Thuê Nhà
+    </h1>
+
+    <div class="card shadow-lg border-0 rounded-4 p-4 mb-5">
+
+        <h4 class="mb-4 text-primary">
+            <i class="fas fa-credit-card"></i>
+            Thông tin thanh toán
+        </h4>
+
+        <form asp-controller="ThanhToan"
+              asp-action="Create"
+              method="post">
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Tên người thanh toán
+                </label>
+
+                <input type="text"
+                       name="TenNguoiThanhToan"
+                       class="form-control"
+                       placeholder="Nhập tên..."
+                       required />
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Mã nhà
+                </label>
+
+                <input type="number"
+                       name="NhaId"
+                       class="form-control"
+                       placeholder="Nhập mã nhà..."
+                       required />
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Số tiền
+                </label>
+
+                <input type="number"
+                       name="SoTien"
+                       class="form-control"
+                       placeholder="Nhập số tiền..."
+                       required />
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                    Phương thức thanh toán
+                </label>
+
+                <select name="PhuongThuc"
+                        class="form-select"
+                        required>
+
+                    <option value="">-- Chọn phương thức --</option>
+
+                    <option>Tiền mặt</option>
+
+                    <option>Chuyển khoản</option>
+
+                    <option>Momo</option>
+
+                </select>
+
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success w-100 py-2 fw-bold rounded-3">
+
+                <i class="fas fa-money-check-alt"></i>
+                Thanh Toán
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="card shadow border-0 rounded-4 p-4">
+
+        <h4 class="mb-4 text-dark">
+            <i class="fas fa-history"></i>
+            Lịch sử thanh toán
+        </h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead class="table-success">
+
+                    <tr>
+
+                        <th>Người thanh toán</th>
+
+                        <th>Số tiền</th>
+
+                        <th>Phương thức</th>
+
+                        <th>Trạng thái</th>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <th>Quản lý</th>
+                        }
+
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td class="fw-semibold">
+                                    @item.TenNguoiThanhToan
+                                </td>
+
+                                <td class="text-success fw-bold">
+                                    @String.Format("{0:N0} VNĐ", item.SoTien)
+                                </td>
+
+                                <td>
+                                    <span class="badge bg-primary">
+                                        @item.PhuongThuc
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @item.NgayThanhToan.ToString("dd/MM/yyyy HH:mm")
+                                </td>
+                                <td>
+
+                                    @if (item.TrangThai == "Chờ duyệt")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Chờ duyệt
+                                        </span>
+                                    }
+                                    else if (item.TrangThai == "Đã thanh toán")
+                                    {
+                                        <span class="badge bg-success">
+                                            Đã duyệt
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            Từ chối
+                                        </span>
+                                    }
+
+                                </td>
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <td>
+
+                                        @if (item.TrangThai == "Chờ duyệt")
+                                        {
+                                            <a href="/ThanhToan/Duyet/@item.Id"
+                                               class="btn btn-success btn-sm">
+
+                                                Duyệt
+
+                                            </a>
+
+                                            <a href="/ThanhToan/TuChoi/@item.Id"
+                                               class="btn btn-danger btn-sm">
+
+                                                Từ chối
+
+                                            </a>
+                                        }
+
+                                    </td>
+                                }
+                                <td>
+                                    @if (item.TrangThai == "Chờ duyệt")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Chờ duyệt
+                                        </span>
+                                    }
+                                    else if (item.TrangThai == "Đã thanh toán")
+                                    {
+                                        <span class="badge bg-success">
+                                            Đã duyệt
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            Từ chối
+                                        </span>
+                                    }
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center text-muted py-4">
+
+                                Chưa có thanh toán nào
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

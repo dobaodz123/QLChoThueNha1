@@ -89,6 +89,43 @@ namespace QlChoThueNha1.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        // ================= FUNCTION: PROFILE (GET) =================
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            if (!User.Identity.IsAuthenticated)
+                return RedirectToAction("Login");
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+
+            if (user == null)
+                return RedirectToAction("Login");
+
+            return View(user);
+        }
+
+        // ================= FUNCTION: PROFILE (POST) =================
+        [HttpPost]
+        public async Task<IActionResult> Profile(User model)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
+
+            if (user == null)
+                return RedirectToAction("Login");
+
+            user.FullName = model.FullName;
+            user.Phone = model.Phone;
+
+            // Đổi mật khẩu nếu có nhập
+            if (!string.IsNullOrWhiteSpace(model.Password))
+                user.Password = model.Password;
+
+            await _context.SaveChangesAsync();
+            TempData["Success"] = "Cập nhật hồ sơ thành công!";
+            return RedirectToAction("Profile");
+        }
 
         // ================= FUNCTION: LOGOUT =================
         // 🎯 Mục đích: Đăng xuất người dùng

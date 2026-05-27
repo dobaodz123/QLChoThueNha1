@@ -6,6 +6,8 @@ namespace QlChoThueNha1.Models
 {
     public class House
     {
+        internal object Reviews;
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Tên nhà là bắt buộc")]

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using QlChoThueNha1.Models;
 
 namespace QlChoThueNha1.Data
@@ -9,7 +10,10 @@ namespace QlChoThueNha1.Data
             : base(options)
         {
         }
+
         public DbSet<HouseType> HouseTypes { get; set; }
+        public DbSet<DanhGia> DanhGias { get; set; }
+        public DbSet<ThanhToan> ThanhToans { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<House> Houses { get; set; }
         public DbSet<RentalRequest> RentalRequests { get; set; }
@@ -61,7 +65,7 @@ namespace QlChoThueNha1.Data
                     Password = "123456",
                     Email = "customer1@gmail.com",
                     FullName = "Nguyễn Văn A",
-                   
+
                     Role = "Customer"
                 },
                 new User
@@ -71,7 +75,7 @@ namespace QlChoThueNha1.Data
                     Password = "123456",
                     Email = "customer2@gmail.com",
                     FullName = "Trần Thị B",
-                    
+
                     Role = "Customer"
                 }
             );
@@ -171,7 +175,6 @@ namespace QlChoThueNha1.Data
             modelBuilder.Entity<RentalRequest>()
                 .HasOne(r => r.User)
                 .WithMany(u => u.RentalRequests)
-
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
