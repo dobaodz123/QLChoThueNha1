@@ -106,16 +106,30 @@ namespace QlChoThueNha1.Controllers
             return View(request);
         }
 
+      
         // ===================== APPROVE =====================
         public IActionResult Approve(int id)
         {
-            var request = _context.RentalRequests.Find(id);
+            var request = _context.RentalRequests
+                .Include(r => r.House)
+                .FirstOrDefault(r => r.Id == id);
+
             if (request != null)
             {
+                // cập nhật trạng thái yêu cầu thuê
                 request.Status = "Approved";
+
+                // cập nhật trạng thái nhà
+                if (request.House != null)
+                {
+                    request.House.Status = "Đã cho thuê";
+                }
+
                 _context.SaveChanges();
-                TempData["Success"] = "Đã duyệt yêu cầu thuê thành công!";
+
+                TempData["Success"] = "Đã duyệt yêu cầu và cập nhật nhà thành Đã cho thuê!";
             }
+
             return RedirectToAction(nameof(Index));
         }
 

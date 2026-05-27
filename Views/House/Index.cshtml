@@ -459,23 +459,45 @@
 
                         <div class="house-card-body">
                             <div class="house-name">@item.Name</div>
+
                             <div class="house-address">
                                 <i class="fas fa-map-marker-alt"></i>
                                 <span>@item.Address</span>
                             </div>
+
                             <div class="house-price">
                                 @item.Price.ToString("N0") đ / tháng
                             </div>
+
+                            @if (item.Status == "Rented")
+                            {
+                                <div class="alert alert-danger py-2 px-3 mb-3 rounded-3 fw-bold text-center">
+                                    <i class="fas fa-house-lock me-2"></i>
+                                    Nhà đã được thuê
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="alert alert-success py-2 px-3 mb-3 rounded-3 fw-bold text-center">
+                                    <i class="fas fa-house-circle-check me-2"></i>
+                                    Nhà còn trống
+                                </div>
+                            }
+
                             <div class="house-actions">
                                 <a asp-action="Details" asp-route-id="@item.Id" class="btn-detail">
                                     <i class="fas fa-eye me-1"></i> Xem chi tiết
                                 </a>
+
                                 @if (User.IsInRole("Admin"))
                                 {
                                     <a asp-action="Edit" asp-route-id="@item.Id" class="btn-edit">
                                         <i class="fas fa-pen"></i>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-delete"
+
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn-delete"
                                        onclick="return confirm('Xóa nhà này?')">
                                         <i class="fas fa-trash"></i>
                                     </a>

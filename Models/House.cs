@@ -55,7 +55,7 @@ namespace QlChoThueNha1.Models
 
         // Navigation property
         public ICollection<RentalRequest>? RentalRequests { get; set; }
-
+        
 
     }
 }
