@@ -1,71 +1,56 @@
-﻿// 👉 File: AccountController.cs
-// 🎯 Mục đích: Xử lý toàn bộ chức năng tài khoản (Login, Logout, Register)
-
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QlChoThueNha1.Data;
 using QlChoThueNha1.Models;
 using System.Security.Claims;
+
 namespace QlChoThueNha1.Controllers
 {
-    // ================= CLASS =================
-    // 🎯 Mục đích: Điều khiển logic tài khoản
-    // ⚙ Chức năng: Nhận request và xử lý
     public class AccountController : Controller
     {
-        // ================= FIELD =================
-        // 🎯 Mục đích: Kết nối database
-        // ⚙ Chức năng: Truy vấn bảng Users
         private readonly AppDbContext _context;
 
-        // ================= CONSTRUCTOR =================
-        // 🎯 Mục đích: Nhận DbContext từ hệ thống
-        // ⚙ Chức năng: Gán vào biến _context
         public AccountController(AppDbContext context)
         {
             _context = context;
         }
-       
-        // ================= FUNCTION: LOGIN (GET) =================
-        // 🎯 Mục đích: Hiển thị trang đăng nhập
-        // ⚙ Chức năng: Điều hướng người dùng
+
+        // ================= LOGIN GET =================
         [HttpGet]
         public IActionResult Login()
         {
-           
             if (User.Identity.IsAuthenticated)
+            {
                 return RedirectToAction("Index", "Home");
+            }
 
             return View();
         }
 
-        // ================= FUNCTION: LOGIN (POST) =================
-        // 🎯 Mục đích: Xử lý đăng nhập
-        // ⚙ Chức năng: Kiểm tra + xác thực + tạo session
+        // ================= LOGIN POST =================
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(password))
             {
                 TempData["Error"] = "Vui lòng nhập đầy đủ thông tin!";
                 return View();
             }
 
-            // 🎯 Tìm user trong database
-            // ⚙ Chức năng: So khớp email + password
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == username && u.Password == password);
+                .FirstOrDefaultAsync(x =>
+                    x.Email == username &&
+                    x.Password == password);
 
-         
             if (user == null)
             {
                 TempData["Error"] = "Sai tài khoản hoặc mật khẩu!";
                 return View();
             }
 
-            
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.Email),
@@ -73,99 +58,126 @@ namespace QlChoThueNha1.Controllers
                 new Claim("FullName", user.FullName ?? user.Email)
             };
 
-    
             var identity = new ClaimsIdentity(
                 claims,
-                CookieAuthenticationDefaults.AuthenticationScheme);
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
-       
+            var principal = new ClaimsPrincipal(identity);
+
             await HttpContext.SignInAsync(
                 CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+                principal
+            );
 
-            
+            TempData["Success"] = "Đăng nhập thành công!";
+
             if (user.Role == "Admin")
+            {
                 return RedirectToAction("Index", "Admin");
+            }
 
             return RedirectToAction("Index", "Home");
         }
-        // ================= FUNCTION: PROFILE (GET) =================
-        [HttpGet]
-        public async Task<IActionResult> Profile()
-        {
-            if (!User.Identity.IsAuthenticated)
-                return RedirectToAction("Login");
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-
-            if (user == null)
-                return RedirectToAction("Login");
-
-            return View(user);
-        }
-
-        // ================= FUNCTION: PROFILE (POST) =================
-        [HttpPost]
-        public async Task<IActionResult> Profile(User model)
-        {
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Email == User.Identity.Name);
-
-            if (user == null)
-                return RedirectToAction("Login");
-
-            user.FullName = model.FullName;
-            user.Phone = model.Phone;
-
-            // Đổi mật khẩu nếu có nhập
-            if (!string.IsNullOrWhiteSpace(model.Password))
-                user.Password = model.Password;
-
-            await _context.SaveChangesAsync();
-            TempData["Success"] = "Cập nhật hồ sơ thành công!";
-            return RedirectToAction("Profile");
-        }
-
-        // ================= FUNCTION: LOGOUT =================
-        // 🎯 Mục đích: Đăng xuất người dùng
-        // ⚙ Chức năng: Xóa session / cookie
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "Account");
-        }
-
-        // ================= FUNCTION: REGISTER (GET) =================
-        // 🎯 Mục đích: Hiển thị form đăng ký
+        // ================= REGISTER GET =================
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
-        // ================= FUNCTION: REGISTER (POST) =================
-        // 🎯 Mục đích: Tạo tài khoản mới
-        // ⚙ Chức năng: Validate + lưu DB
+        // ================= REGISTER POST =================
         [HttpPost]
         public IActionResult Register(User model)
         {
-            if (!ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(model.Email) ||
+    string.IsNullOrWhiteSpace(model.Password))
             {
+                TempData["Error"] = "Vui lòng nhập đầy đủ thông tin!";
                 return View(model);
             }
 
-            if (_context.Users.Any(u => u.Email == model.Email))
+            bool emailExists = _context.Users
+                .Any(x => x.Email == model.Email);
+
+            if (emailExists)
             {
+                TempData["Error"] = "Email đã tồn tại!";
                 return View(model);
             }
 
-            model.CreatedAt = DateTime.Now;
             model.Role = "Customer";
+            model.CreatedAt = DateTime.Now;
 
             _context.Users.Add(model);
             _context.SaveChanges();
+
+            TempData["Success"] = "Đăng ký thành công!";
+
+            return RedirectToAction("Login");
+        }
+
+        // ================= PROFILE GET =================
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.Email == User.Identity.Name);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Không tìm thấy tài khoản!";
+                return RedirectToAction("Login");
+            }
+
+            return View(user);
+        }
+
+        // ================= PROFILE POST =================
+        [HttpPost]
+        public async Task<IActionResult> Profile(User model)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x =>
+                    x.Email == User.Identity.Name);
+
+            if (user == null)
+            {
+                TempData["Error"] = "Không tìm thấy tài khoản!";
+                return RedirectToAction("Login");
+            }
+
+            user.FullName = model.FullName;
+            user.Phone = model.Phone;
+
+            if (!string.IsNullOrWhiteSpace(model.Password))
+            {
+                user.Password = model.Password;
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Cập nhật hồ sơ thành công!";
+
+            return RedirectToAction("Profile");
+        }
+
+        // ================= LOGOUT =================
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            TempData["Success"] = "Đăng xuất thành công!";
 
             return RedirectToAction("Login");
         }
