@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using QlChoThueNha1.Models;
+using BCrypt.Net;
 
 namespace QlChoThueNha1.Data
 {
@@ -10,7 +11,7 @@ namespace QlChoThueNha1.Data
             : base(options)
         {
         }
-
+        
         public DbSet<HouseType> HouseTypes { get; set; }
         public DbSet<DanhGia> DanhGias { get; set; }
         public DbSet<ThanhToan> ThanhToans { get; set; }
@@ -53,7 +54,7 @@ namespace QlChoThueNha1.Data
                 new User
                 {
                     UserId = 1,
-                    Password = "123456", // Trong thực tế nên hash
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     Email = "admin@gmail.com",
                     FullName = "Quản trị viên",
                     Role = "Admin"
@@ -62,7 +63,7 @@ namespace QlChoThueNha1.Data
                 {
                     UserId = 2,
 
-                    Password = "123456",
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     Email = "customer1@gmail.com",
                     FullName = "Nguyễn Văn A",
 
@@ -71,8 +72,7 @@ namespace QlChoThueNha1.Data
                 new User
                 {
                     UserId = 3,
-
-                    Password = "123456",
+                    Password = BCrypt.Net.BCrypt.HashPassword("123456"),
                     Email = "customer2@gmail.com",
                     FullName = "Trần Thị B",
 
@@ -186,4 +186,7 @@ namespace QlChoThueNha1.Data
         }
     }
 
+    public class Payment
+    {
+    }
 }

@@ -5,20 +5,32 @@ using QlChoThueNha1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. Cấu hình Services
+// ================= SERVICES =================
+
 builder.Services.AddControllersWithViews();
+
 builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<GeminiService>();
-// Đăng ký HttpClient để gọi API Gemini
-
-
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddSession();
+// ================= SESSION =================
+builder.Services.AddDistributedMemoryCache();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
+// ================= AUTH =================
+builder.Services.AddAuthentication(
+    CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Account/Login";
@@ -27,10 +39,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 
-// 2. Build App
+// ================= BUILD =================
+
 var app = builder.Build();
 
-// 3. Cấu hình Middleware
+// ================= MIDDLEWARE =================
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -39,8 +53,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
 app.UseRouting();
-app.UseSession();
+
+app.UseSession(); // ⚠️ phải nằm trước Authentication
+
 app.UseAuthentication();
 app.UseAuthorization();
 

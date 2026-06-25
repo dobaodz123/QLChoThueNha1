@@ -6,8 +6,7 @@ namespace QlChoThueNha1.Models
 {
     public class User
     {
-        internal object Id;
-
+        
         public int UserId { get; set; }
 
         [Required(ErrorMessage = "Họ và tên không được để trống")]
@@ -18,7 +17,7 @@ namespace QlChoThueNha1.Models
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Mật khẩu không được để trống")]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
 
         public string? Phone { get; set; }
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QlChoThueNha1.Data;
 
@@ -11,9 +12,11 @@ using QlChoThueNha1.Data;
 namespace QlChoThueNha1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260625104516_FixPasswordHashing")]
+    partial class FixPasswordHashing
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -328,7 +331,7 @@ namespace QlChoThueNha1.Migrations
                             UserId = 1,
                             Email = "admin@gmail.com",
                             FullName = "Quản trị viên",
-                            Password = "$2a$11$CNUsUpn97pqWvh3YeQcXLOgS.DD/8/hldun6O5xsmPQrE4jBoKvr2",
+                            Password = "123456",
                             Role = "Admin"
                         },
                         new
@@ -336,7 +339,7 @@ namespace QlChoThueNha1.Migrations
                             UserId = 2,
                             Email = "customer1@gmail.com",
                             FullName = "Nguyễn Văn A",
-                            Password = "$2a$11$2m1uEbztcnx7hUhC3PrR8ejYVRAtsXlGAwvyi9GVoFlGy/vHoCiO.",
+                            Password = "123456",
                             Role = "Customer"
                         },
                         new
@@ -344,7 +347,7 @@ namespace QlChoThueNha1.Migrations
                             UserId = 3,
                             Email = "customer2@gmail.com",
                             FullName = "Trần Thị B",
-                            Password = "$2a$11$yO/KWg7hLkefX5bUS4U4Ze7Bc65C2On.tH//gmffoNp6g8HH1d6Xu",
+                            Password = "123456",
                             Role = "Customer"
                         });
                 });

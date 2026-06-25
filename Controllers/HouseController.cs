@@ -1,7 +1,7 @@
 ﻿// ===== FILE: HouseController.cs =====
 // 👉 Quản lý nhà (xem, thêm, sửa, xóa, duyệt thuê)
 
-using Microsoft.AspNetCore.Authorization; // Phân quyền (Admin)
+using Microsoft.AspNetCore.Authorization; // ✅ Phân quyền (Admin)
 using Microsoft.AspNetCore.Mvc; // MVC
 using Microsoft.EntityFrameworkCore; // Query DB
 using QlChoThueNha1.Data; // DbContext
@@ -137,6 +137,8 @@ public class HouseController : Controller
 
     // ===== APPROVE =====
     // 👉 Duyệt yêu cầu thuê
+    // ✅ THÊM DÒNG NÀY - Chỉ Admin mới được phép
+    [Authorize(Roles = "Admin")]
     public IActionResult Approve(int id)
     {
         var req = _context.RentalRequests.Find(id);
@@ -155,6 +157,8 @@ public class HouseController : Controller
 
     // ===== REJECT =====
     // 👉 Từ chối yêu cầu thuê
+    // ✅ THÊM DÒNG NÀY - Chỉ Admin mới được phép
+    [Authorize(Roles = "Admin")]
     public IActionResult Reject(int id)
     {
         var req = _context.RentalRequests.Find(id);
